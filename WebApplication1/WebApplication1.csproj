@@ -204,6 +204,7 @@
       <DependentUpon>us_state.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="Models\Ranges.cs" />
     <Compile Include="obj\Debug\.NETFramework,Version=v4.8.AssemblyAttributes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -3689,7 +3690,6 @@
     <Folder Include=".vs1\harrellsMap - New\FileContentIndex\merges\" />
     <Folder Include=".vs1\harrellsMap\FileContentIndex\merges\" />
     <Folder Include="App_Data\" />
-    <Folder Include="Models\" />
     <Folder Include="obj\Debug\TempPE\" />
   </ItemGroup>
   <ItemGroup>
