@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- jQueryMaps XML Schemas - version 001.002.001 -->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+<xs:include schemaLocation="commonTypes.xsd"/>
+
+<xs:complexType name="featureType">
+  <xs:sequence maxOccurs="unbounded" >
+    <xs:element name="letteredLabel" type="letteredLabelType" minOccurs="0" maxOccurs="unbounded" />
+    <xs:element name="featureStyle" type="featureStyleType" minOccurs="0" maxOccurs="unbounded" />
+    <xs:element name="style" type="featureStyleType" minOccurs="0" maxOccurs="unbounded" />
+    <xs:element name="action" type="actionType" minOccurs="0" maxOccurs="unbounded" />
+  </xs:sequence>
+  <xs:attribute name="id" type="xs:string" use="required" />
+  <xs:attribute name="category" type="xs:string" use="required" />
+  <xs:attribute name="label" type="xs:string" />
+  <xs:anyAttribute processContents="skip" />
+</xs:complexType>
+
+<xs:element name="jqm_features">
+  <xs:complexType >
+      <xs:sequence maxOccurs="unbounded" >
+	    <xs:element name="feature" type="featureType" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+  </xs:complexType>
+</xs:element>
+
+</xs:schema>

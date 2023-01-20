@@ -1,0 +1,8 @@
+[ODBC]
+DRIVER=SQL Server Native Client 11.0
+DATABASE=harrells
+WSID=EVERITT-00285
+APP=Microsoft Office 2013
+Trusted_Connection=Yes
+SERVER=(local)\SQLEXPRESS
+Description=linking Access to SQL

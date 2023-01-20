@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- jQueryMaps XML Schemas - version 001.002.001 -->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+<xs:include schemaLocation="commonTypes.xsd"/>
+
+<xs:simpleType name="toolbarAlignType">
+  <xs:restriction base="xs:string">
+    <xs:pattern value="top|bottom|left|right|top-left|top-right|bottom-left|bottom-right" />
+  </xs:restriction>
+</xs:simpleType>
+
+<xs:simpleType name="toolbarOrientationType">
+  <xs:restriction base="xs:string">
+    <xs:pattern value="vertical|horizontal" />
+  </xs:restriction>
+</xs:simpleType>
+
+<xs:simpleType name="displayModeType">
+  <xs:restriction base="xs:string">
+    <xs:pattern value="regular|fullScreen|fullScreenOnClick|viewport|viewportOnClick" />
+  </xs:restriction>
+</xs:simpleType>
+
+<xs:simpleType name="coordinatesFormatType">
+  <xs:restriction base="xs:string">
+    <xs:pattern value="regular|fullScreen|fullScreenOnClick|viewport|viewportOnClick" />
+  </xs:restriction>
+</xs:simpleType>
+
+<xs:complexType name="toolbarType">
+      <xs:attribute name="align" type="toolbarAlignType" />
+      <xs:attribute name="orientation" type="toolbarOrientationType" />
+      <xs:attribute name="verticalMargin" type="xs:integer" />
+      <xs:attribute name="horizontalMargin" type="xs:integer" />
+      <xs:attribute name="buttonsPath" type="xs:string" />
+      <xs:attribute name="buttonsExtension" type="imageExtensionType" />
+      <xs:attribute name="showCloseButton" type="trueOrFalseType" />
+      <xs:attribute name="showZoomButtons" type="trueOrFalseType" />
+      <xs:attribute name="showBackButton" type="trueOrFalseType" />
+      <xs:attribute name="showInitialViewButton" type="trueOrFalseType" />
+      <xs:attribute name="showSelectByRectangleModeButton" type="trueOrFalseType" />
+      <xs:attribute name="showFullScreenButton" type="trueOrFalseType" />
+      <xs:attribute name="showPrintButton" type="trueOrFalseType" />
+      <xs:attribute name="showHelpButton" type="trueOrFalseType" />
+</xs:complexType>
+  
+<xs:complexType name="filterType">
+      <xs:attribute name="id" type="xs:string" />
+      <xs:attribute name="type" type="xs:string" />
+      <xs:attribute name="offsetX" type="xs:integer" />
+      <xs:attribute name="offsetY" type="xs:integer" />
+      <xs:attribute name="blur" type="xs:integer" />
+      <xs:attribute name="fillColor" type="xs:string" />
+</xs:complexType>
+
+<xs:complexType name="textStyleType">
+      <xs:attribute name="id" type="xs:string" />
+      <xs:attribute name="filterId" type="xs:string" />
+      <xs:attribute name="fontName" type="xs:string" />
+      <xs:attribute name="fontSize" type="xs:decimal" />
+      <xs:attribute name="fontBold" type="trueOrFalseType" />
+      <xs:attribute name="fontItalic" type="trueOrFalseType" />
+      <xs:attribute name="align" type="textAlignType" />
+	  <xs:attribute name="fillColor" type="xs:string" />
+	  <xs:attribute name="strokeColor" type="xs:string" />
+	  <xs:attribute name="strokeWidth" type="xs:decimal" />      
+</xs:complexType>
+
+<xs:complexType name="functionalityType">
+  <xs:attribute name="zoomInOutWheel" type="trueOrFalseType" />
+  <xs:attribute name="pan" type="trueOrFalseType" />
+</xs:complexType>
+
+<xs:complexType name="platformDisplayType">
+  <xs:attribute name="id" type="xs:string" />
+  <xs:attribute name="displayMode" type="displayModeType" />
+  <xs:attribute name="align" type="textAlignType" />
+  <xs:attribute name="darkColor" type="xs:string" />
+</xs:complexType>
+
+<xs:element name="jqm_config">
+  <xs:complexType >
+      <xs:sequence maxOccurs="unbounded" >
+        <xs:element name="toolbar" type="toolbarType" minOccurs="0" maxOccurs="1" />
+        <xs:element name="functionality" type="functionalityType" minOccurs="0" maxOccurs="unbounded" />
+        <xs:element name="platformDisplay" type="platformDisplayType" minOccurs="0" maxOccurs="unbounded" />
+		<xs:element name="filter" type="filterType" minOccurs="0" maxOccurs="unbounded" />
+	    <xs:element name="textStyle" type="textStyleType" minOccurs="0" maxOccurs="unbounded" />
+	    <xs:element name="featureStyle" type="featureStyleType" minOccurs="0" maxOccurs="unbounded" />
+	    <xs:element name="style" type="featureStyleType" minOccurs="0" maxOccurs="unbounded" />
+	    <xs:element name="markerStyle" type="markerStyleType" minOccurs="0" maxOccurs="unbounded" />
+	    <xs:element name="action" type="actionType" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+      <xs:attribute name="version" type="xs:string" use="required" />
+      <xs:attribute name="license" type="xs:string" use="required" />
+      <xs:attribute name="authorizationFile" type="xs:string" use="required" />
+      <xs:attribute name="transparentImageUrl" type="xs:string" />
+      <xs:attribute name="zoomFeatureFrames" type="xs:integer" />
+      <xs:attribute name="zoomFeatureMargin" type="xs:decimal" />
+      <xs:attribute name="zoomFeatureMinScale" type="xs:integer" />
+      <xs:attribute name="zoomButtonFrames" type="xs:integer" />
+      <xs:attribute name="zoomButtonsFactor" type="xs:decimal" />
+      <xs:attribute name="zoomMouseWheelFrames" type="xs:integer" />
+      <xs:attribute name="zoomMouseWheelFactor" type="xs:decimal" />
+      <xs:attribute name="previousLevelOpacity" type="xs:decimal" />
+      <xs:attribute name="allowCaching" type="trueOrFalseType" />
+      <xs:attribute name="loadingInfoDiv" type="xs:string" />
+      <xs:attribute name="loadingSpinnerUrl" type="xs:string" use="required" />
+      <xs:attribute name="selectByRectangleFillColor" type="xs:string" />
+      <xs:attribute name="fromMapJsFunction" type="xs:string" />
+      <xs:attribute name="geolocationInterval" type="xs:decimal" />
+	  <xs:attribute name="geolocationIconUrl" type="xs:string" />
+      <xs:attribute name="coordinatesFormat" type="coordinatesFormatType" />
+	  <xs:attribute name="magneticDeclinationGridUrl" type="xs:string" />
+	  <xs:attribute name="markersRenderDestination" type="xs:string" />
+  </xs:complexType>
+</xs:element>
+
+</xs:schema>

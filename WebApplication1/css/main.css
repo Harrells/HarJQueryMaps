@@ -1,0 +1,61 @@
+/******************/
+/*** GLOBAL CSS ***/
+/******************/
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, 
+cite, code, del, dfn, em, font, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, 
+dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td { margin: 0; padding: 0; border: 0; outline: 0; font-size: 100%; vertical-align: baseline; background: transparent; position: relative; }
+
+body 					{ line-height: 1; }
+ol, ul, li 				{ list-style: none; }
+:focus 					{ outline: 0; }
+table 					{ border-collapse: collapse; border-spacing: 0; }
+a img 					{ border: none; }
+a, a:link, 
+a:visited, 
+a.active 				{ text-decoration:none; }
+
+/*** FONT ***/	
+body					{ font-family: Verdana, Geneva, sans-serif; font-size: 12px; color: #666666; }
+a						{ color: #4a6e93; text-decoration: none; }
+a:hover					{ color: #4a6e93; text-decoration: underline; }
+p						{ color: #666666; line-height: 1.2; }
+h1						{ color: #999999; font-size: 30px; font-weight: normal; font-family: Arial, Helvetica, sans-serif; font-weight: bold; line-height: 30px; }
+h2						{ color: #999999; font-size: 14px; font-weight: normal; font-family: Arial, Helvetica, sans-serif; font-weight: bold; line-height: 16pt; }
+h3						{ color: #999999; font-size: 14px; font-weight: normal; font-family: Arial, Helvetica, sans-serif; font-weight: bold; line-height: 14px; }
+a.bread                 { font-weight: bold; }
+
+select                  { width: 100%; display: block; padding: 3px; border: 1px solid #d3d1cb; }
+
+/*** BODY ***/
+html, body				{ margin: 0; padding: 0; }
+body 					{ width: 100%; background: #f5f5f5 url(body.png); }
+.page 					{ width: 1280px; margin: 20px auto 0 auto; padding: 0; }
+
+/*** BOX ***/
+.box					{ margin: 0 0 10px 0; padding: 0; background: #ffffff; border: 1px solid #d3d1cb;  }
+.box .top				{ border-bottom: 1px solid #D3D1CB; background: #f6f5f1; padding: 10px;  }
+.box .title             { border-top: 1px solid #D3D1CB; }
+.box .cnt				{ padding: 10px; overflow: hidden; }
+
+.span_map               { width:  1020px; float: left; }
+.span_sidebox           { width:  240px; float: right; }
+
+/*** MAPS ***/
+ul.box_menu    					{ margin: 6px; padding: 0; list-style-type: none; }
+ul.box_menu li					{ border-top: 1px solid #eceae6; line-height: 1;  }
+ul.box_menu li a  				{ display: block; padding: 4px 12px; } 
+ul.box_menu li a:hover			{ padding: -4px -12px;   }
+ul.box_menu li:last-child       { border-bottom: 1px solid #eceae6; }
+ul.box_menu li a.select			{ color: #DD3F24; font-weight: bold; }
+ul.box_menu li a.select:hover	{ text-decoration: none; cursor: default; }
+
+/*** LEGEND ***/
+table.legend	        { width: 100%; margin: 0; overflow: hidden; }
+table.legend td         { padding: 2px; line-height: 1; vertical-align: middle; }
+div.legend_box			{ float: left; width: 18px; height: 18px; }
+
+/*** JQM MAP ***/
+.jqm_loader             { width: 220px; padding: 20px; display: none; background-color: #FFFFFF; color: #333333; font-family: Verdana, Geneva, sans-serif; font-size: 11px; text-align: center; border: 1px solid #999999; opacity: 0.95; -moz-border-radius:6px; -webkit-border-radius:6px; -moz-box-shadow: 0 0 50px #ccc; -webkit-box-shadow: 0 0 50px #ccc; position: absolute;  }
+.jqm_popup              { position: absolute; display: none; background: #14588e; font-size: 12px; font-weight: bold; text-transform: uppercase; color: #ffffff; text-align: center; line-height: 1.6em; border-radius: 2px; padding: 6px 12px; }
+.popup                  { font-size: 11px; font-weight: normal; }

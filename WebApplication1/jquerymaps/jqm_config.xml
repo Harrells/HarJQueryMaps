@@ -1,0 +1,23 @@
+<jqm_config
+	version					    = "001.002.001"
+	license					    = "jqm-0023-7419"
+	authorizationFile 	= "jqm_authorization.txt"
+	loadingSpinnerUrl		= "images/misc/spinner.gif"
+	transparentImageUrl	= "images/misc/transparent.gif"
+	zoomFeatureFrames		= "4"
+	zoomFeatureMargin		= "0.1"
+	zoomButtonFrames		= "4"
+	zoomButtonsFactor		= "0.2"
+	zoomMouseWheelFactor	= "0.05"
+	zoomMouseWheelFrames	= "2"
+	zoomFeatureMinScale		= "50000"
+	previousLevelOpacity	= "0.1"
+	allowCaching			  = "No"
+	loadingInfoDiv 			= "jqm_loader"
+	fromMapJsFunction		= "jqmFromMap" >
+	<toolbar align="bottom-left" orientation="horizontal" horizontalMargin="5" verticalMargin="5" buttonsPath= "images/toolbars/" buttonsExtension="png" showZoomButtons="true" showInitialViewButton="false" showSelectModeButton="false" showFullScreenButton="false" showHelpButton="false" showBackButton="true" />
+	<functionality zoomInOutWheel="Yes" pan="Yes" />
+	<textStyle id="label" filterId="" fontName="Verdana" fontSize="10" fontBold="no" fontItalic="no" align="center" fillColor="#000000" strokeColor="" lineWidth="0" />
+	<style event="onMouseOver" fillColor="rgba(255,255,255,0.3)" strokeColor="#333333" strokeWidth="2" />
+	<style event="onhighlighted" fillColor="rgba(255, 255, 255, 0.4)" strokeColor="#666666" strokeWidth="3" />
+</jqm_config>

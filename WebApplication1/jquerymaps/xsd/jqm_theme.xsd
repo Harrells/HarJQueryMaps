@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- jQueryMaps XML Schemas - version 001.002.001 -->
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+<xs:include schemaLocation="commonTypes.xsd"/>
+
+<xs:complexType name="platformFunctionalityType">
+  <xs:attribute name="id" type="xs:string" />
+  <xs:attribute name="calculatedMapAreas" type="trueOrFalseType" />
+  <xs:attribute name="onMouseOverCalculateInterval" type="xs:decimal" />
+  <xs:attribute name="displayRegularFeatures" type="trueOrFalseType" />
+</xs:complexType>
+
+<xs:complexType name="letteredLabelType">
+  <xs:attribute name="attributeName" type="xs:string" />
+  <xs:attribute name="textStyle" type="xs:string" />
+</xs:complexType>
+
+<xs:element name="jqm_theme">
+  <xs:complexType >
+      <xs:sequence maxOccurs="unbounded" >
+        <xs:element name="platformFunctionality" type="platformFunctionalityType" minOccurs="0" maxOccurs="1" />
+        <xs:element name="letteredLabel" type="letteredLabelType" minOccurs="0" maxOccurs="unbounded" />
+	    <xs:element name="featureStyle" type="featureStyleType" minOccurs="0" maxOccurs="unbounded" />
+	    <xs:element name="style" type="featureStyleType" minOccurs="0" maxOccurs="unbounded" />
+	    <xs:element name="markerStyle" type="markerStyleType" minOccurs="0" maxOccurs="unbounded" />
+	    <xs:element name="action" type="actionType" minOccurs="0" maxOccurs="unbounded" />
+      </xs:sequence>
+      <xs:attribute name="id" type="xs:string" use="required" />
+      <xs:attribute name="shapesUrl" type="xs:string" />
+      <xs:attribute name="backgroundImageUrl" type="xs:string" />
+      <xs:attribute name="backgroundImageLowResUrl" type="xs:string" />
+      <xs:attribute name="foregroundImageUrl" type="xs:string" />
+      <xs:attribute name="featureCategoriesUrl" type="xs:string" />
+      <xs:attribute name="featuresUrl" type="xs:string" />
+      <xs:attribute name="markerCategoriesUrl" type="xs:string" />
+      <xs:attribute name="reloadInterval" type="xs:decimal" />
+      <xs:attribute name="reloadTheme" type="trueOrFalseType" />
+      <xs:attribute name="reloadFeatures" type="trueOrFalseType" />
+      <xs:attribute name="reloadFeatureCategories" type="trueOrFalseType" />
+      <xs:attribute name="reloadMarkers" type="trueOrFalseType" />
+      <xs:attribute name="reloadMarkerCategories" type="trueOrFalseType" />
+  </xs:complexType>
+</xs:element>
+
+</xs:schema>

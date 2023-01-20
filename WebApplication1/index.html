@@ -1,0 +1,37 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<title>jQueryMaps</title>
+    <link rel="stylesheet" type="text/css" href="css/main.css" />
+    <link rel="stylesheet" type="text/css" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/themes/smoothness/jquery-ui.css" />
+
+    <!--[if IE]><script>if (document.documentMode < 9) document.write("<script src='jquerymaps/libs/excanvas/excanvas_tagcanvas.js'><\/script>");</script><![endif]-->
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min.js" ></script>
+	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.9.0/jquery-ui.min.js" ></script>
+	<script type="text/javascript" src="jquerymaps/libs/jqmMap.js" ></script>
+</head>
+
+<body>
+
+    <div class="page">
+        <div class="box span_map">
+            <div class="top"><div id="jqm_bread"></div></div>
+            <div class="cnt">
+                <div id="jqmMap"></div>
+                <div id="jqm_loader" class="jqm_loader"></div>
+	            <div id="jqm_popup" class="jqm_popup">##label##<br /><span class="popup">Total Sales: ##popup##</span></div> <!--this appears in the popup-->
+            </div>
+        </div>
+        
+        <div class="box span_sidebox">
+            <div class="top">Legend</div>
+            <div class="cnt">
+                <div id="jqm_legend"></div>
+            </div>
+            <div id="jqm_info"></div>
+        </div>
+	</div>    
+    
+</body>
+</html>
