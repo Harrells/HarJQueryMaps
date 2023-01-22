@@ -2,12 +2,19 @@
 using System.Data.SqlClient;
 using Dapper;
 using System.Linq;
+using System.Web.Mvc;
+
 
 
 public partial class jquerymaps_theme_feature_categories : System.Web.UI.Page
 {
     protected void Page_Load(object sender, EventArgs e)
     {
+
+        //these are static so they are accessible
+        string fromMonth = WebApplication1.Models.Globals.FromMonth;
+
+
         Response.Write("<?xml version=\"1.0\" encoding=\"utf-8\"?>");
         Response.Write("<jqm_featureCategories xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:noNamespaceSchemaLocation=\"../xsd/jqm_featureCategories.xsd\">");
 
