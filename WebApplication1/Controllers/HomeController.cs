@@ -13,7 +13,7 @@ namespace WebApplication1.Controllers
             //ROUTING TO THE MVS's /HOME/INDEX PAGE TO TAKE ADVANTAGE OF MVC's CAPTURING OF QUERY STRING PARAMETERS INSTEAD OF GOING DIRECTLY TO THE JQUERYMAPS INDEX PAGE
 
             //DO NOT RIGHT KEY ON THE INDEX.HTML PAGE IN THE ROOT OF THIS APPLICATION WHEN DEBUGGING - LET THE APP ROUTE TO ITS DEFAULT SETTINGS IN ROUTECONFIG.CS
-            //TO PATH OUT IN THE BROWSER URL THE FORMAT IS https://localhost:44307/?Groups=~name1^value1~name2^value2~ NOT https://localhost:44307/INDEX.HTML?Groups=~name1^value1~name2^value2~
+            //TO PATH OUT IN THE BROWSER URL THE FORMAT IS https://localhost:44307/?FromMonth=1/2/23&ToMonth=2/2/23&Filter1=Filter1data&Filter2=Filter2data&Groups=~name1^value1~name2^value2~ NOT https://localhost:44307/INDEX.HTML?Groups=~name1^value1~name2^value2~
 
             //getting qs paramerters here - putting them into the model so they are accessible to the rest of the app
             Models.Globals.FromMonth = Request.QueryString["FromMonth"];
