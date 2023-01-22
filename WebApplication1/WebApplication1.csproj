@@ -148,60 +148,8 @@
       <DependentUpon>feature_states_counties.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
-    <Compile Include="jquerymaps\theme\feature_zipcodes.aspx.cs">
-      <DependentUpon>feature_zipcodes.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="jquerymaps\theme\gih_feature_counties.aspx.cs">
-      <DependentUpon>gih_feature_counties.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="jquerymaps\theme\gih_feature_states_counties.aspx.cs">
-      <DependentUpon>gih_feature_states_counties.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="jquerymaps\theme\gih_feature_zipcodes.aspx.cs">
-      <DependentUpon>gih_feature_zipcodes.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="jquerymaps\theme\gih_us.aspx.cs">
-      <DependentUpon>gih_us.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="jquerymaps\theme\gih_us_county.aspx.cs">
-      <DependentUpon>gih_us_county.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="jquerymaps\theme\gih_us_state.aspx.cs">
-      <DependentUpon>gih_us_state.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="jquerymaps\theme\golf_terr_feature_states_counties.aspx.cs">
-      <DependentUpon>golf_terr_feature_states_counties.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="jquerymaps\theme\golf_terr_us.aspx.cs">
-      <DependentUpon>golf_terr_us.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="jquerymaps\theme\TurfMap.aspx.cs">
-      <DependentUpon>TurfMap.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="jquerymaps\theme\TurfMap_states_counties.aspx.cs">
-      <DependentUpon>TurfMap_states_counties.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
     <Compile Include="jquerymaps\theme\us.aspx.cs">
       <DependentUpon>us.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="jquerymaps\theme\us_county.aspx.cs">
-      <DependentUpon>us_county.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="jquerymaps\theme\us_state.aspx.cs">
-      <DependentUpon>us_state.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
     <Compile Include="Models\Ranges.cs" />
@@ -3586,20 +3534,7 @@
     <Content Include="jquerymaps\theme\feature_categories.aspx" />
     <Content Include="jquerymaps\theme\feature_counties.aspx" />
     <Content Include="jquerymaps\theme\feature_states_counties.aspx" />
-    <Content Include="jquerymaps\theme\feature_zipcodes.aspx" />
-    <Content Include="jquerymaps\theme\gih_feature_counties.aspx" />
-    <Content Include="jquerymaps\theme\gih_feature_states_counties.aspx" />
-    <Content Include="jquerymaps\theme\gih_feature_zipcodes.aspx" />
-    <Content Include="jquerymaps\theme\gih_us.aspx" />
-    <Content Include="jquerymaps\theme\gih_us_county.aspx" />
-    <Content Include="jquerymaps\theme\gih_us_state.aspx" />
-    <Content Include="jquerymaps\theme\golf_terr_feature_states_counties.aspx" />
-    <Content Include="jquerymaps\theme\golf_terr_us.aspx" />
-    <Content Include="jquerymaps\theme\TurfMap.aspx" />
-    <Content Include="jquerymaps\theme\TurfMap_states_counties.aspx" />
     <Content Include="jquerymaps\theme\us.aspx" />
-    <Content Include="jquerymaps\theme\us_county.aspx" />
-    <Content Include="jquerymaps\theme\us_state.aspx" />
     <Content Include="obj\Debug\WebApplication1.csproj.FileListAbsolute.txt" />
     <Content Include="obj\Debug\WebApplication1.dll" />
     <Content Include="obj\Debug\WebApplication1.pdb" />
