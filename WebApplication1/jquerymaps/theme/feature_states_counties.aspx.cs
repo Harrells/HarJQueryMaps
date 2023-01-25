@@ -17,20 +17,17 @@ public partial class jquerymaps_theme_feature_states_counties : System.Web.UI.Pa
 
             //MTW012023
 
-            using (SqlConnection db = new SqlConnection("Data Source=harazuresql1.database.windows.net;Initial Catalog=HarMaps;User ID=HarMapsUserFull;Password=YouCanTunaAPianoButYouCantTunaFish!135"))
+            using (SqlConnection azdb = new SqlConnection(Environment.GetEnvironmentVariable("SQLCONNSTR_HarMgmtDBContext")))
             {
 
 
-                String sql = "SELECT rangeID, range_min, range_max FROM bag_ranges WHERE range_level = 'county' ORDER BY rangeID";
-                List<Ranges> rangedata = db.Query<Ranges>(sql).ToList();
 
-                sql = "SELECT c.countryID, c.stateID, c.countyID, c.county, c.CurSalesTotal AS total "
-                    + "FROM jqm_us_countiesNew c "
-                    + " Where c.CurSalesTotal>0 "
-                    + "ORDER BY c.countyID";
-                var result = db.Query(sql).ToList();
+
+                var rangedata = WebApplication1.Models.Globals.MapRanges.Where(o => o.range_level == "county").ToList();
+
+                var result = WebApplication1.Models.Globals.Results;
                 String category_str = "";
-
+                
                 foreach (var rd in result)
                 {
                     category_str = "";
@@ -48,10 +45,13 @@ public partial class jquerymaps_theme_feature_states_counties : System.Web.UI.Pa
                 }
 
 
-                sql = "SELECT s.countryID, s.stateID, s.state FROM jqm_us_statesNew s ORDER BY s.stateID ";
-                result = db.Query(sql).ToList();
+                string sql = "SELECT bs.countryID, bs.stateID, bs.state"
+                    + " FROM BOGODashboardsStates bs"
+                    + " ORDER BY bs.stateID";
 
-                foreach (var rd in result)
+                var states = azdb.Query(sql).ToList();
+
+                foreach (var rd in states)
                 {
                     Response.Write("<feature id=\"" + rd.countryID.ToString() + "_" + rd.stateID.ToString() + "\" category=\"state\" label=\"" + Server.HtmlEncode(rd.state.ToString()) + "\" popup=\"\" >\n");
                     Response.Write("<action event=\"onClick\" target=\"loadChild\" url=\"us_state.aspx?id=##id##\" />");

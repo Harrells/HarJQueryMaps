@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Data.SqlClient;
+using System.Collections;
+using Dapper;
+using WebApplication1.Models;
 
 namespace WebApplication1.Controllers
 {
@@ -10,40 +14,74 @@ namespace WebApplication1.Controllers
     {
         public void Index()
         {
-            //ROUTING TO THE MVS's /HOME/INDEX PAGE TO TAKE ADVANTAGE OF MVC's CAPTURING OF QUERY STRING PARAMETERS INSTEAD OF GOING DIRECTLY TO THE JQUERYMAPS INDEX PAGE
-
-            //DO NOT RIGHT KEY ON THE INDEX.HTML PAGE IN THE ROOT OF THIS APPLICATION WHEN DEBUGGING - LET THE APP ROUTE TO ITS DEFAULT SETTINGS IN ROUTECONFIG.CS
-            //TO PATH OUT IN THE BROWSER URL THE FORMAT IS https://localhost:44307/?FromMonth=1/2/23&ToMonth=2/2/23&Filter1=Filter1data&Filter2=Filter2data&Groups=~name1^value1~name2^value2~ NOT https://localhost:44307/INDEX.HTML?Groups=~name1^value1~name2^value2~
-
-            //getting qs paramerters here - putting them into the model so they are accessible to the rest of the app
-            Models.Globals.FromMonth = Request.QueryString["FromMonth"];
-            Models.Globals.ToMonth = Request.QueryString["ToMonth"];
-            Models.Globals.Filter1 = Request.QueryString["Filter1"];
-            Models.Globals.Filter2 = Request.QueryString["Filter2"];
-
-
-            List<Models.NameValue> groupsList = new List<Models.NameValue>();
-            if (Request.QueryString["Groups"] != null)
+            using (SqlConnection db = new SqlConnection(Environment.GetEnvironmentVariable("SQLCONNSTR_CMDTAContext")))
             {
-                string[] groupNVPairs = Request.QueryString["Groups"].Split('~');
-                foreach (var group in groupNVPairs)
+
+                //ROUTING TO THE MVS's /HOME/INDEX PAGE TO TAKE ADVANTAGE OF MVC's CAPTURING OF QUERY STRING PARAMETERS INSTEAD OF GOING DIRECTLY TO THE JQUERYMAPS INDEX PAGE
+
+                //DO NOT RIGHT KEY ON THE INDEX.HTML PAGE IN THE ROOT OF THIS APPLICATION WHEN DEBUGGING - LET THE APP ROUTE TO ITS DEFAULT SETTINGS IN ROUTECONFIG.CS
+                //TO PATH OUT IN THE BROWSER URL THE FORMAT IS https://localhost:44307/?Dashboard=Blended Fert&FromMonth=2022/01&ToMonth=2022/12&Filter1=&Filter2=&Groups=~Turf^Florida~Turf^Southeast~Turf^West~Turf^Coastal Plains~Turf^Midatlantic~Turf^Midwest~Turf^Northeast~Turf^Couth Central~Nursery^North Hort~Nursery^West Hort~Nursery^South Hort~Specialty Ag^Spec. Ag.~
+                //NOT https://localhost:44307/INDEX.HTML?Groups=~name1^value1~name2^value2~
+
+                //getting qs paramerters here - putting them into the model so they are accessible to the rest of the app
+                Models.Globals.Dashboard = Request.QueryString["Dashboard"];
+                Models.Globals.FromMonth = Request.QueryString["FromMonth"];
+                Models.Globals.ToMonth = Request.QueryString["ToMonth"];
+                Models.Globals.Filter1 = Request.QueryString["Filter1"];
+                Models.Globals.Filter2 = Request.QueryString["Filter2"];
+
+
+                string groupsList = "";
+                if (Request.QueryString["Groups"] != null)
                 {
-                    if (group != "")
+                    string[] groupNVPairs = Request.QueryString["Groups"].Split('~');
+                    foreach (var group in groupNVPairs)
                     {
-                        var nvGroup = group.Split('^');
-                        groupsList.Add(new Models.NameValue { Name = nvGroup[0], Value = nvGroup[1] });
+                        if (group != "")
+                        {
+                            var nvGroup = group.Split('^');
+                            string repgroup = nvGroup[1];
+                            string actrepgroup = nvGroup[1];
 
+                            // need to get actual group name from db
+                            string sqlstring = "SELECT eg.Name"
+                                + " FROM webhub.dbo.EmployeeGroups eg"
+                                + " WHERE eg.Description = @group";
+                            var thisgroup = db.Query(sqlstring, new { @group = repgroup }).FirstOrDefault();
+                            if (thisgroup != null)
+                            {
+                                actrepgroup = thisgroup.Name;
+                                if (groupsList != "")
+                                    groupsList = groupsList + ",";
+                                groupsList = groupsList + "'" + actrepgroup + "'";
+                            }
+
+                        }
                     }
+                    Models.Globals.Groups = groupsList;
+
+
+                    DashboardCriteria criteria = new DashboardCriteria();
+                    criteria.Dashboard = Models.Globals.Dashboard;
+                    criteria.FromMonth = Models.Globals.FromMonth;
+                    criteria.ToMonth = Models.Globals.ToMonth;
+                    criteria.Filter1 = Models.Globals.Filter1;
+                    criteria.Filter2 = Models.Globals.Filter2;
+                    criteria.Groups = Models.Globals.Groups;
+
+                    // build a global list of results by county
+
+                    Models.Globals.Results= WebApplication1.Business_Rules.MapDataMethods.GetCountyResults(criteria);
+
+
+
                 }
-                Models.Globals.Groups = groupsList;
 
+
+                //calling jquerymaps third party page - their page calls the appropriate cs (feature_catogories.aspx.cs for example) file to display the correct map
+                Response.Redirect("/index.html");
             }
-
-
-            //calling jquerymaps third party page - their page calls the appropriate cs (feature_catogories.aspx.cs for example) file to display the correct map
-            Response.Redirect("/index.html");
         }
-
 
     }
 }

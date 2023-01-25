@@ -124,6 +124,7 @@
     <Compile Include="App_Start\BundleConfig.cs" />
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Business Rules\MapDataMethods.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -160,9 +161,12 @@
       <DependentUpon>us_state.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="Models\CountyResults.cs" />
+    <Compile Include="Models\DashboardCriteria.cs" />
     <Compile Include="Models\Globals.cs" />
     <Compile Include="Models\NameValue.cs" />
     <Compile Include="Models\Ranges.cs" />
+    <Compile Include="Models\RepGroups.cs" />
     <Compile Include="obj\Debug\.NETFramework,Version=v4.8.AssemblyAttributes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
