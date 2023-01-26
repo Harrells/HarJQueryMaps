@@ -24,7 +24,7 @@ namespace WebApplication1.Controllers
                 //Sample URL for non polyon      https://localhost:44307/?Dashboard=Blended Fert&FromMonth=2022/01&ToMonth=2022/12&Filter1=&Filter2=&Groups=~Turf^Florida~Turf^Southeast~Turf^West~Turf^Coastal Plains~Turf^Midatlantic~Turf^Midwest~Turf^Northeast~Turf^Couth Central~Nursery^North Hort~Nursery^West Hort~Nursery^South Hort~Specialty Ag^Spec. Ag.~
                 //sample URL for polyon    https://localhost:44307/?Dashboard=Polyon&FromMonth=2022/01&ToMonth=2022/12&Filter1=&Filter2=&Groups=~Turf^Florida~Turf^Southeast~Turf^West~Turf^Coastal Plains~Turf^Midatlantic~Turf^Midwest~Turf^Northeast~Turf^Couth Central~Nursery^North Hort~Nursery^West Hort~Nursery^South Hort~Specialty Ag^Spec. Ag.~
                 //NOT https://localhost:44307/INDEX.HTML?Groups=~name1^value1~name2^value2~
-
+                //https://harmapstest.azurewebsites.net/?Dashboard=Blended Fert&FromMonth=2022/01&ToMonth=2022/12&Filter1=&Filter2=&Groups=~Turf^Florida~Turf^Southeast~Turf^West~Turf^Coastal Plains~Turf^Midatlantic~Turf^Midwest~Turf^Northeast~Turf^Couth Central~Nursery^North Hort~Nursery^West Hort~Nursery^South Hort~Specialty Ag^Spec. Ag.~
                 //getting qs paramerters here - putting them into the model so they are accessible to the rest of the app
                 Models.Globals.Dashboard = Request.QueryString["Dashboard"];
                 Models.Globals.FromMonth = Request.QueryString["FromMonth"];
