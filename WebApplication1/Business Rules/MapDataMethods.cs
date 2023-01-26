@@ -40,8 +40,9 @@ namespace WebApplication1.Business_Rules
 
                     // fill global ranges list
                     sqlstring = "SELECT br.rangeID, br.range_level, range, br.range_min, br.range_max, br.range_color"
-                        + " FROM BOGODashboardsRanges br";
-                    Models.Globals.MapRanges = azdb.Query<Ranges>(sqlstring).ToList();
+                        + " FROM BOGODashboardsRanges br"
+                        + " WHERE dashboardname=@dashboard";
+                    Models.Globals.MapRanges = azdb.Query<Ranges>(sqlstring,new { @dashboard = Models.Globals.Dashboard }).ToList();
 
 
 
@@ -243,7 +244,7 @@ namespace WebApplication1.Business_Rules
                     {
                         // not the polyon dashboard
 
-                        sqlstring = "SELECT bc.countryID, bc.stateID, bc.countyID, bc.county, ISNULL(DATA.total,0) AS total"
+                        sqlstring = "SELECT bc.countryID, bc.stateID, bc.countyID, bc.county, bc.StateName as state, ISNULL(DATA.total,0) AS total"
                             + " FROM BOGODashboardsCounties bc left JOIN"
                             + " (SELECT ess.JQMCountyId, SUM((CASE WHEN ess.invoice_date >= @currbeg AND ess.invoice_date <= @currend then ess.BaseQty ELSE 0 end) * (CASE WHEN ess.essoptype = 4 THEN - 1 ELSE 1 END)) AS total"
                             + " FROM ExecSummarySales ess INNER JOIN GPSItemMaster gm ON ess.ITEMNMBR = gm.ITEMNMBR"

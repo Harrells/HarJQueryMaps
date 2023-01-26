@@ -29,7 +29,7 @@ public partial class jquerymaps_info_legend : System.Web.UI.Page
         }
         catch (Exception ex)
         {
-            throw ex;
+            //throw ex;
         }
     }
 

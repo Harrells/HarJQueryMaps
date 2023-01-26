@@ -53,7 +53,7 @@ public partial class jquerymaps_theme_feature_categories : System.Web.UI.Page
         }
         catch (Exception ex)
         {
-            throw ex;
+            //throw ex;
         }
     }
 }

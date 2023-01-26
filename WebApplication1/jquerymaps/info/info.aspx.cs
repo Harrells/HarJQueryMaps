@@ -16,50 +16,53 @@ public partial class jquerymaps_info_info : System.Web.UI.Page
             using (SqlConnection db = new SqlConnection("Data Source=harazuresql1.database.windows.net;Initial Catalog=HarMaps;User ID=HarMapsUserFull;Password=YouCanTunaAPianoButYouCantTunaFish!135"))
             {
                 String id = ""; if (Request["id"] != null) { id = Request["id"].ToString(); }
-        String info = "";
-        String displaytotal = "";
-        String sql = "";
+                String info = "";
+                String displaytotal = "";
+                string label = "";
 
                 //MTW012023
-
+                var results = WebApplication1.Models.Globals.Results;
                 switch (id.Length)
                 {
                     case 5:
-                        sql = "SELECT state AS label, CurSalesTotal FROM jqm_us_statesNew WHERE stateID = '" + id.Substring(3, 2) + "'";
+                        results = results.Where(o => o.stateID == id.Substring(3, 2) && o.total != "0").ToList();
+                        label = "state";
                         break;
                     case 11:
-                        sql = "SELECT county AS label, CurSalesTotal FROM jqm_us_countiesNew WHERE countyID = '" + id.Substring(6, 5) + "'";
+                        results = results.Where(o => o.countyID == id.Substring(6, 5) && o.total != "0").ToList();
+                        label = "county";
                         break;
                     case 18:
-                        sql = "SELECT zipID+' - '+zip AS label, CurSalesTotal FROM jqm_us_zipcodesNew WHERE zipID = '" + id.Substring(13, 5) + "'";
+                        // we aren't ever going down to zip
+                        results = results.Where(o => o.zipID == id.Substring(13, 5) && o.total != "0").ToList();
+                        label = "zip";
                         break;
                 }
-
-                
-
-                if (sql != "")
+                double calctotal = 0;
+                foreach (var rec in results)
                 {
-                    var rd = db.Query(sql).FirstOrDefault();
-                    if (rd!=null)
-                    {
-                        rd.Read();
-                        displaytotal = rd.label.ToString() + ": " + Convert.ToDouble(rd.CurSalesTotal.ToString()).ToString("##,##0");
-                        //rep = rd["name"].ToString();
-                    }
+                    calctotal = calctotal + Convert.ToDouble(rec.total);
+                    if (label == "state")
+                        label = rec.state;
+                    else if (label == "county") 
+                        label = rec.county;
                 }
 
-                //this appears under the legend box
-                info += "<div class='top'>Total Sales</div>";
-        info += "<div class='cnt'>" + displaytotal + "</div>";
-        //info += "<div class='cnt'>" + rep + "</div>";
-        
 
-        Response.Write(info);
+                displaytotal =label + ": " + Convert.ToDouble(calctotal.ToString("##,##0"));
+
+                //this appears under the legend box
+                info += "<div class='top'>Total " + WebApplication1.Models.Globals.DashboardUM + "</div>";
+                info += "<div class='cnt'>" + displaytotal + "</div>";
+                //info += "<div class='cnt'>" + rep + "</div>";
+
+
+                Response.Write(info);
             }
         }
         catch (Exception ex)
         {
-            throw ex;
+            //throw ex;
         }
 
     }

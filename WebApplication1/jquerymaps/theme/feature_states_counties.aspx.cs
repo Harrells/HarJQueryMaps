@@ -65,7 +65,7 @@ public partial class jquerymaps_theme_feature_states_counties : System.Web.UI.Pa
         }
         catch (Exception ex)
         {
-            throw ex;
+            //throw ex;
         }
     }
 }
