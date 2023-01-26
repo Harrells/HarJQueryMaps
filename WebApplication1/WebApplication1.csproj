@@ -3548,6 +3548,8 @@
     <Content Include="jquerymaps\theme\feature_categories.aspx" />
     <Content Include="jquerymaps\theme\feature_counties.aspx" />
     <Content Include="jquerymaps\theme\feature_states_counties.aspx" />
+    <Content Include="jquerymaps\theme\MarkerCategories.xml" />
+    <Content Include="jquerymaps\theme\Markers.xml" />
     <Content Include="jquerymaps\theme\us.aspx" />
     <Content Include="obj\Debug\WebApplication1.csproj.FileListAbsolute.txt" />
     <Content Include="obj\Debug\WebApplication1.dll" />
