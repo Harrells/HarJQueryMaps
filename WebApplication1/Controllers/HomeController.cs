@@ -20,7 +20,9 @@ namespace WebApplication1.Controllers
                 //ROUTING TO THE MVS's /HOME/INDEX PAGE TO TAKE ADVANTAGE OF MVC's CAPTURING OF QUERY STRING PARAMETERS INSTEAD OF GOING DIRECTLY TO THE JQUERYMAPS INDEX PAGE
 
                 //DO NOT RIGHT KEY ON THE INDEX.HTML PAGE IN THE ROOT OF THIS APPLICATION WHEN DEBUGGING - LET THE APP ROUTE TO ITS DEFAULT SETTINGS IN ROUTECONFIG.CS
-                //TO PATH OUT IN THE BROWSER URL THE FORMAT IS https://localhost:44307/?Dashboard=Blended Fert&FromMonth=2022/01&ToMonth=2022/12&Filter1=&Filter2=&Groups=~Turf^Florida~Turf^Southeast~Turf^West~Turf^Coastal Plains~Turf^Midatlantic~Turf^Midwest~Turf^Northeast~Turf^Couth Central~Nursery^North Hort~Nursery^West Hort~Nursery^South Hort~Specialty Ag^Spec. Ag.~
+                //TO PATH OUT IN THE BROWSER URL THE FORMAT IS
+                //Sample URL for non polyon      https://localhost:44307/?Dashboard=Blended Fert&FromMonth=2022/01&ToMonth=2022/12&Filter1=&Filter2=&Groups=~Turf^Florida~Turf^Southeast~Turf^West~Turf^Coastal Plains~Turf^Midatlantic~Turf^Midwest~Turf^Northeast~Turf^Couth Central~Nursery^North Hort~Nursery^West Hort~Nursery^South Hort~Specialty Ag^Spec. Ag.~
+                //sample URL for polyon    https://localhost:44307/?Dashboard=Polyon&FromMonth=2022/01&ToMonth=2022/12&Filter1=&Filter2=&Groups=~Turf^Florida~Turf^Southeast~Turf^West~Turf^Coastal Plains~Turf^Midatlantic~Turf^Midwest~Turf^Northeast~Turf^Couth Central~Nursery^North Hort~Nursery^West Hort~Nursery^South Hort~Specialty Ag^Spec. Ag.~
                 //NOT https://localhost:44307/INDEX.HTML?Groups=~name1^value1~name2^value2~
 
                 //getting qs paramerters here - putting them into the model so they are accessible to the rest of the app
