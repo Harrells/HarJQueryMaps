@@ -42,7 +42,7 @@ namespace WebApplication1.Business_Rules
                     sqlstring = "SELECT br.rangeID, br.range_level, range, br.range_min, br.range_max, br.range_color"
                         + " FROM BOGODashboardsRanges br"
                         + " WHERE dashboardname=@dashboard";
-                    Models.Globals.MapRanges = azdb.Query<Ranges>(sqlstring,new { @dashboard = Models.Globals.Dashboard }).ToList();
+                    Models.Globals.MapRanges = azdb.Query<Ranges>(sqlstring, new { @dashboard = Models.Globals.Dashboard }).ToList();
 
 
 
@@ -73,7 +73,7 @@ namespace WebApplication1.Business_Rules
                         fieldname = dashboardinfo.SumFieldName;
                     if (!string.IsNullOrEmpty(dashboardinfo.DashboardUM))
                     {
-                        Models.Globals.DashboardUM= dashboardinfo.DashboardUM;
+                        Models.Globals.DashboardUM = dashboardinfo.DashboardUM;
                         dashboardum = dashboardinfo.DashboardUM;
                     }
 
@@ -123,122 +123,30 @@ namespace WebApplication1.Business_Rules
                     {
                         // polyon dashboard is slightly different
 
-                        if (criteria.Filter1 != "" || criteria.Filter2 != "")
-                        {
-                            if (fromyear != toyear)
-                            {
-                                sqlstring = "SELECT trim(case when isnull(s.Description,'')<>'' then s.Description else s.Name end) as RepSegment, trim(case when isnull(eg.Description,'')<>'' then eg.Description else eg.Name end) as RepGroup, trim(RawSalesHistory.SLPRSNID) as SLPRSNID, we.LastName + ', ' + we.FirstName AS SalesmanName, "
-                                    + " SUM(ROUND((CASE WHEN(Year > @fromyear AND Year < @toyear) OR"
-                            + " (Year = @fromyear AND Month >= @frommonth) or "
-                            + " (Year = @toyear AND Month <= @tomonth) THEN QtyTons ELSE 0 END), 2)) AS ActualNmbr, SUM(ROUND((CASE WHEN(Year > @priorfromyear AND Year < @priortoyear) OR"
-                            + " (Year = @priorfromyear AND Month >= @frommonth) or "
-                            + " (Year = @priortoyear AND Month <= @tomonth) THEN case when month =month(getdate()) then cast(day(getdate()) as float) / cast(day(EOMONTH(getdate())) as float) else 1 end * qtytons ELSE 0 END), 2)) AS PriorNmbr "
-                            + " FROM RawSalesHistory"
-                            + " INNER JOIN webhub.dbo.employees we ON RawSalesHistory.SLPRSNID=we.ImportKey"
+                        sqlstring = "SELECT bc.countryID, bc.stateID, bc.countyID, bc.county, bc.StateName as state, ISNULL(DATA.total,0) AS total"
+                            + " FROM BOGODashboardsCounties bc left JOIN"
+                            + " (SELECT  r.JQMCountyId, SUM(ROUND((CASE WHEN(Year = @fromyear AND Month >= @frommonth) AND(Year = @toyear AND Month <= @tomonth) THEN QtyTons ELSE 0 END), 2)) AS total"
+                            + " FROM RawSalesHistoryByCounty r INNER JOIN webhub.dbo.employees we ON r.SLPRSNID = we.ImportKey"
                             + " INNER JOIN webhub.dbo.Segments s ON we.SegmentId = s.SegmentId"
                             + " INNER JOIN webhub.dbo.EmployeeGroups eg ON we.EmployeeGroupId = eg.EmployeeGroupId"
-                            + "  INNER JOIN CM_Inventory ON RawSalesHistory.ITEMNMBR = CM_Inventory.inv_number INNER JOIN"
-                            + " HAR.dbo.IV00101 ON RawSalesHistory.ITEMNMBR = HAR.dbo.IV00101.ITEMNMBR"
-                            + " WHERE";
-                                sqlstring = sqlstring + " ((RawSalesHistory.Year > @fromyear) AND (RawSalesHistory.Year < @toyear)";
+                            + " inner Join CM_Inventory ON r.ITEMNMBR = CM_Inventory.inv_number"
+                            + " INNER JOIN HAR.dbo.IV00101 ON r.ITEMNMBR = HAR.dbo.IV00101.ITEMNMBR"
+                            + " WHERE eg.Name IN(" + criteria.Groups + ")  and s.Description IS NOT null AND eg.Description IS NOT null";
 
-                                if (criteria.Filter1 != string.Empty)
-                                    sqlstring = sqlstring + " AND (" + filterfieldname1 + " = @filter1)";
-                                if (criteria.Filter2 != string.Empty)
-                                    sqlstring = sqlstring + " AND (" + filterfieldname2 + " = @filter2)";
+                        if (criteria.Filter1 != string.Empty)
+                            sqlstring = sqlstring + " AND (" + filterfieldname1 + " = @filter1)";
+                        if (criteria.Filter2 != string.Empty)
+                            sqlstring = sqlstring + " AND (" + filterfieldname2 + " = @filter2)";
 
-                                sqlstring = sqlstring + ") OR ( (1=1) ";
+                        //  and ((RawSalesHistory.Year > @fromyear) AND (RawSalesHistory.Year < @toyear)";
 
-                                if (criteria.Filter1 != string.Empty)
-                                    sqlstring = sqlstring + " AND (" + filterfieldname1 + " = @filter1)";
-                                if (criteria.Filter2 != string.Empty)
-                                    sqlstring = sqlstring + " AND (" + filterfieldname2 + " = @filter2)";
+                        sqlstring = sqlstring + " and  (((r.Year = @fromyear) AND(r.Month >= @frommonth) AND(CM_Inventory.polyon <> 0)) OR ((r.Year = @toyear) "
+                            + " AND(r.Month <= @tomonth) AND(CM_Inventory.polyon <> 0)) OR((r.Year = @priorfromyear) AND(r.Month >= @frommonth) AND(CM_Inventory.polyon <> 0))"
+                            + " OR((r.Year = @priortoyear) AND(r.Month <= @tomonth) AND(CM_Inventory.polyon <> 0)))"
+                            + " GROUP BY r.JQMCountyId) AS Data ON Data.JQMCountyId = bc.countyID"
+                            + " ORDER BY bc.countyID";
 
-                                sqlstring = sqlstring + " and (((RawSalesHistory.Year = @fromyear) AND(RawSalesHistory.Month >= @frommonth) AND(CM_Inventory.polyon <> 0)) OR"
-                                + " ((RawSalesHistory.Year = @toyear) AND(RawSalesHistory.Month <= @tomonth) AND(CM_Inventory.polyon <> 0)) OR"
-                                + " ((RawSalesHistory.Year = @priorfromyear) AND(RawSalesHistory.Month >= @frommonth) AND(CM_Inventory.polyon <> 0)) OR"
-                                + " ((RawSalesHistory.Year = @priortoyear) AND(RawSalesHistory.Month <= @tomonth) AND(CM_Inventory.polyon <> 0))))"
-                                + " GROUP BY trim(case when isnull(s.Description,'')<>'' then s.Description else s.Name end), trim(case when isnull(eg.Description,'')<>'' then eg.Description else eg.Name end),  RawSalesHistory.SLPRSNID, we.LastName + ', ' + we.FirstName"
-                                    + " Order by we.LastName  + ', ' +  we.FirstName";
-
-                                results = db.Query<CountyResults>(sqlstring, new { @fromyear = fromyear, @frommonth = frommonth, @toyear = toyear, @tomonth = tomonth, @priorfromyear = priorfromyear, @priortoyear = priortoyear, @filter1 = criteria.Filter1, @filter2 = criteria.Filter2 }).ToList();
-                            }
-                            else
-                            {
-                                sqlstring = "SELECT  trim(case when isnull(s.Description,'')<>'' then s.Description else s.Name end) as RepSegment, trim(case when isnull(eg.Description,'')<>'' then eg.Description else eg.Name end) as RepGroup, trim(RawSalesHistory.SLPRSNID) as SLPRSNID, we.LastName + ', ' + we.FirstName AS SalesmanName, SUM(ROUND((CASE WHEN"
-                            + " (Year = @fromyear AND Month >= @frommonth) AND "
-                            + " (Year = @toyear AND Month <= @tomonth) THEN QtyTons ELSE 0 END), 2)) AS ActualNmbr, SUM(ROUND((CASE WHEN"
-                            + " (Year = @priorfromyear AND Month >= @frommonth) AND "
-                            + " (Year = @priortoyear AND Month <= @tomonth) THEN case when month =month(getdate()) then cast(day(getdate()) as float) / cast(day(EOMONTH(getdate())) as float) else 1 end * qtytons ELSE 0 END), 2)) AS PriorNmbr"
-                            + " FROM RawSalesHistory"
-                            + " INNER JOIN webhub.dbo.employees we ON RawSalesHistory.SLPRSNID=we.ImportKey"
-                            + " INNER JOIN webhub.dbo.Segments s ON we.SegmentId = s.SegmentId"
-                            + " INNER JOIN webhub.dbo.EmployeeGroups eg ON we.EmployeeGroupId = eg.EmployeeGroupId"
-                            + " inner Join CM_Inventory ON RawSalesHistory.ITEMNMBR = CM_Inventory.inv_number INNER JOIN"
-                            + " HAR.dbo.IV00101 ON RawSalesHistory.ITEMNMBR = HAR.dbo.IV00101.ITEMNMBR"
-                            + " WHERE  s.Description IS NOT null AND eg.Description IS NOT null and  (( (1=1) ";
-
-                                if (criteria.Filter1 != string.Empty)
-                                    sqlstring = sqlstring + " AND (" + filterfieldname1 + " = @filter1)";
-                                if (criteria.Filter2 != string.Empty)
-                                    sqlstring = sqlstring + " AND (" + filterfieldname2 + " = @filter2)";
-
-                                sqlstring = sqlstring + " and (((RawSalesHistory.Year = @fromyear) AND(RawSalesHistory.Month >= @frommonth) AND(CM_Inventory.polyon <> 0)) OR"
-                                + " ((RawSalesHistory.Year = @toyear) AND(RawSalesHistory.Month <= @tomonth) AND(CM_Inventory.polyon <> 0)) OR"
-                                + " ((RawSalesHistory.Year = @priorfromyear) AND(RawSalesHistory.Month >= @frommonth) AND(CM_Inventory.polyon <> 0)) OR"
-                                + " ((RawSalesHistory.Year = @priortoyear) AND(RawSalesHistory.Month <= @tomonth) AND(CM_Inventory.polyon <> 0)))))"
-                                 + " GROUP BY trim(case when isnull(s.Description,'')<>'' then s.Description else s.Name end), trim(case when isnull(eg.Description,'')<>'' then eg.Description else eg.Name end), we.LastName + ', ' + we.FirstName, RawSalesHistory.SLPRSNID"
-                                    + " Order by we.LastName  + ', ' +  we.FirstName";
-                                results = db.Query<CountyResults>(sqlstring, new { @fromyear = fromyear, @frommonth = frommonth, @toyear = toyear, @tomonth = tomonth, @priorfromyear = priorfromyear, @priortoyear = priortoyear, @filter1 = criteria.Filter1, @filter2 = criteria.Filter2 }).ToList();
-                            }
-                        }
-                        else
-                        {
-                            if (fromyear != toyear)
-                            {
-                                sqlstring = "SELECT        trim(case when isnull(s.Description,'')<>'' then s.Description else s.Name end) as RepSegment, trim(case when isnull(eg.Description,'')<>'' then eg.Description else eg.Name end) as RepGroup,  EmpComm.Emp_ID as SLSPRSNID, we.LastName + ', ' + we.FirstName AS SalesmanName , SUM(ROUND((CASE WHEN (CommYear > @fromyear AND CommYear < @fromyear) OR"
-                                    + " (CommYear = @fromyear AND MonthNmbr >= @frommonth) or (CommYear = @toyear AND MonthNmbr <= @tomonth) THEN PolyonTons ELSE 0 END), 2)) AS ActualNmbr, "
-                                    + " SUM(ROUND((CASE WHEN(CommYear > @priorfromyear AND CommYear < @priortoyear) OR"
-                                    + " (CommYear = @priorfromyear AND MonthNmbr >= @frommonth) or (CommYear = @priortoyear AND MonthNmbr <= @tomonth) THEN CASE WHEN MonthNmbr = Month(getdate()) THEN CAST(day(getdate()) AS float) / CAST(day(EOMonth(getdate())) AS float)"
-                                    + " ELSE 1 END * PolyonTons ELSE 0 END), 2)) AS PriorNmbr"
-                                    + " FROM EmpCommMonths INNER JOIN"
-                                    + " EmpComm ON EmpCommMonths.EmpCommYearID = EmpComm.EmpCommYearID"
-                                    + " INNER JOIN webhub.dbo.employees we ON EmpComm.Emp_ID=we.ImportKey"
-                                    + " INNER JOIN webhub.dbo.Segments s ON we.SegmentId = s.SegmentId"
-                                    + " INNER JOIN webhub.dbo.EmployeeGroups eg ON we.EmployeeGroupId = eg.EmployeeGroupId"
-                                    + " WHERE  s.Description IS NOT null AND eg.Description IS NOT null and  ((EmpComm.CommYear > @fromyear) AND(EmpComm.CommYear < @toyear) OR"
-                                    + " (EmpComm.CommYear = @fromyear) AND(EmpCommMonths.MonthNmbr >= @frommonth) OR"
-                                    + " (EmpComm.CommYear = @toyear) AND(EmpCommMonths.MonthNmbr <= @tomonth) OR"
-                                    + " (EmpComm.CommYear = @priorfromyear) AND(EmpCommMonths.MonthNmbr >= @frommonth) OR"
-                                    + " (EmpComm.CommYear = @priortoyear) AND(EmpCommMonths.MonthNmbr <= @tomonth))"
-                                    + " GROUP BY trim(case when isnull(s.Description,'')<>'' then s.Description else s.Name end), trim(case when isnull(eg.Description,'')<>'' then eg.Description else eg.Name end), we.LastName + ', ' + we.FirstName, EmpComm.Emp_ID";
-                                results = db.Query<CountyResults>(sqlstring, new { @fromyear = fromyear, @frommonth = frommonth, @toyear = toyear, @tomonth = tomonth, @priorfromyear = priorfromyear, @priortoyear = priortoyear, @filter1 = criteria.Filter1, @filter2 = criteria.Filter2 }).ToList();
-                            }
-                            else
-                            {
-                                sqlstring = "SELECT        trim(case when isnull(s.Description,'')<>'' then s.Description else s.Name end) as RepSegment, trim(case when isnull(eg.Description,'')<>'' then eg.Description else eg.Name end) as RepGroup,  EmpComm.Emp_ID as SLSPRSNID  , we.LastName + ', ' + we.FirstName AS SalesmanName, "
-                                    + " SUM(ROUND((CASE WHEN (CommYear > @fromyear AND CommYear < @fromyear) OR"
-                                    + " (CommYear = @fromyear AND MonthNmbr >= @frommonth) AND (CommYear = @toyear AND MonthNmbr <= @tomonth) THEN PolyonTons ELSE 0 END), 2)) AS ActualNmbr, "
-                                    + " SUM(ROUND((CASE WHEN(CommYear > @priorfromyear AND CommYear < @priortoyear) OR"
-                                    + " (CommYear = @priorfromyear AND MonthNmbr >= @frommonth) AND (CommYear = @priortoyear AND MonthNmbr <= @tomonth) THEN CASE WHEN MonthNmbr = Month(getdate()) THEN CAST(day(getdate()) AS float) / CAST(day(EOMonth(getdate())) AS float)"
-                                    + " ELSE 1 END * PolyonTons ELSE 0 END), 2)) AS PriorNmbr"
-                                    + " FROM EmpCommMonths INNER JOIN"
-                                    + " EmpComm ON EmpCommMonths.EmpCommYearID = EmpComm.EmpCommYearID"
-                                    //+ " Inner Join Employees e on e.emp_id=empcomm.emp_id "
-                                    + " INNER JOIN webhub.dbo.employees we ON EmpComm.Emp_ID=we.ImportKey"
-                                    + " INNER JOIN webhub.dbo.Segments s ON we.SegmentId = s.SegmentId"
-                                    + " INNER JOIN webhub.dbo.EmployeeGroups eg ON we.EmployeeGroupId = eg.EmployeeGroupId"
-                                    + " WHERE  s.Description IS NOT null AND eg.Description IS NOT null and  ((EmpComm.CommYear > @fromyear) AND(EmpComm.CommYear < @toyear) OR"
-                                    + " (EmpComm.CommYear = @fromyear) AND(EmpCommMonths.MonthNmbr >= @frommonth) OR"
-                                    + " (EmpComm.CommYear = @toyear) AND(EmpCommMonths.MonthNmbr <= @tomonth) OR"
-                                    + " (EmpComm.CommYear = @priorfromyear) AND(EmpCommMonths.MonthNmbr >= @frommonth) OR"
-                                    + " (EmpComm.CommYear = @priortoyear) AND(EmpCommMonths.MonthNmbr <= @tomonth))"
-                                    + " GROUP BY trim(case when isnull(s.Description,'')<>'' then s.Description else s.Name end), trim(case when isnull(eg.Description,'')<>'' then eg.Description else eg.Name end),  EmpComm.Emp_ID, we.LastName + ', ' + we.FirstName"
-                                    + " Order by we.LastName  + ', ' +  we.FirstName";
-                                results = db.Query<CountyResults>(sqlstring, new { @fromyear = fromyear, @frommonth = frommonth, @toyear = toyear, @tomonth = tomonth, @priorfromyear = priorfromyear, @priortoyear = priortoyear, @filter1 = criteria.Filter1, @filter2 = criteria.Filter2 }).ToList();
-
-                            }
-                        }
+                        results = db.Query<CountyResults>(sqlstring, new { @fromyear = fromyear, @frommonth = frommonth, @toyear = toyear, @tomonth = tomonth, @priorfromyear = priorfromyear, @priortoyear = priortoyear, @filter1 = criteria.Filter1, @filter2 = criteria.Filter2 }).ToList();
                     }
                     else
                     {
