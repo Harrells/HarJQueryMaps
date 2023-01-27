@@ -31,7 +31,7 @@ namespace WebApplication1.Controllers
                 Models.Globals.ToMonth = Request.QueryString["ToMonth"];
                 Models.Globals.Filter1 = Request.QueryString["Filter1"];
                 Models.Globals.Filter2 = Request.QueryString["Filter2"];
-
+                Models.Globals.Results = new List<CountyResults>();
 
                 string groupsList = "";
                 if (Request.QueryString["Groups"] != null)

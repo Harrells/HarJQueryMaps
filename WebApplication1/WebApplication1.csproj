@@ -167,6 +167,7 @@
     <Compile Include="Models\NameValue.cs" />
     <Compile Include="Models\Ranges.cs" />
     <Compile Include="Models\RepGroups.cs" />
+    <Compile Include="Models\RepTotal.cs" />
     <Compile Include="obj\Debug\.NETFramework,Version=v4.8.AssemblyAttributes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

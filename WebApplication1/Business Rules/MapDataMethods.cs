@@ -54,6 +54,8 @@ namespace WebApplication1.Business_Rules
                     string whereclause = "";
                     string fieldname = "BaseQty";
 
+                    int maxnmbr = 0;
+
                     Models.Globals.DashboardUM = "Tons";
 
                     if (criteria.Filter1 != "")
@@ -118,6 +120,7 @@ namespace WebApplication1.Business_Rules
                     }
 
                     List<CountyResults> results = new List<CountyResults>();
+                    List<CountyResults> details = new List<CountyResults>();
 
                     if (dashboardname == "POLYON")
                     {
@@ -147,6 +150,31 @@ namespace WebApplication1.Business_Rules
                             + " ORDER BY bc.countyID";
 
                         results = db.Query<CountyResults>(sqlstring, new { @fromyear = fromyear, @frommonth = frommonth, @toyear = toyear, @tomonth = tomonth, @priorfromyear = priorfromyear, @priortoyear = priortoyear, @filter1 = criteria.Filter1, @filter2 = criteria.Filter2 }).ToList();
+
+                        sqlstring = "SELECT Data.Rep, bc.countyID, ISNULL(cast(DATA.total as int),0) AS total"
+                            + " FROM BOGODashboardsCounties bc left JOIN"
+                            + " (SELECT we.LastName AS Rep,  r.JQMCountyId, SUM(ROUND((CASE WHEN (Year = @fromyear AND Month >= @frommonth) AND  (Year = @toyear AND Month <= @tomonth) THEN QtyTons ELSE 0 END), 2)) AS total "
+                            + " FROM RawSalesHistoryByCounty r INNER JOIN webhub.dbo.employees we ON r.SLPRSNID = we.ImportKey"
+                            + " INNER JOIN webhub.dbo.Segments s ON we.SegmentId = s.SegmentId"
+                            + " INNER JOIN webhub.dbo.EmployeeGroups eg ON we.EmployeeGroupId = eg.EmployeeGroupId"
+                            + " inner Join CM_Inventory ON r.ITEMNMBR = CM_Inventory.inv_number"
+                            + " INNER JOIN HAR.dbo.IV00101 ON r.ITEMNMBR = HAR.dbo.IV00101.ITEMNMBR"
+                            + " WHERE eg.Name IN(" + criteria.Groups + ")  and s.Description IS NOT null AND eg.Description IS NOT null";
+
+                        if (criteria.Filter1 != string.Empty)
+                            sqlstring = sqlstring + " AND (" + filterfieldname1 + " = @filter1)";
+                        if (criteria.Filter2 != string.Empty)
+                            sqlstring = sqlstring + " AND (" + filterfieldname2 + " = @filter2)";
+
+                        //  and ((RawSalesHistory.Year > @fromyear) AND (RawSalesHistory.Year < @toyear)";
+
+                        sqlstring = sqlstring + " and  (((r.Year = @fromyear) AND(r.Month >= @frommonth) AND(CM_Inventory.polyon <> 0)) OR ((r.Year = @toyear) "
+                            + " AND(r.Month <= @tomonth) AND(CM_Inventory.polyon <> 0)) OR((r.Year = @priorfromyear) AND(r.Month >= @frommonth) AND(CM_Inventory.polyon <> 0))"
+                            + " OR((r.Year = @priortoyear) AND(r.Month <= @tomonth) AND(CM_Inventory.polyon <> 0)))"
+                            + " GROUP BY we.LastName, r.JQMCountyId) AS Data ON Data.JQMCountyId = bc.countyID"
+                            + " ORDER BY bc.countyID, total DESC";
+
+                        details = db.Query<CountyResults>(sqlstring, new { @fromyear = fromyear, @frommonth = frommonth, @toyear = toyear, @tomonth = tomonth, @priorfromyear = priorfromyear, @priortoyear = priortoyear, @filter1 = criteria.Filter1, @filter2 = criteria.Filter2 }).ToList();
                     }
                     else
                     {
@@ -188,8 +216,103 @@ namespace WebApplication1.Business_Rules
                         sqlstring = sqlstring + "  GROUP BY ess.JQMCountyId) AS Data ON Data.JQMCountyId=bc.countyID"
                             + " ORDER BY bc.countyID";
                         results = db.Query<CountyResults>(sqlstring, new { @whereclause = whereclause, @company = company, @priorbeg = priorbeg, @currbeg = currbeg, @priorend = priorend, @currend = currend, @filter1 = criteria.Filter1, @filter2 = criteria.Filter2 }).ToList();
+
+                        sqlstring = "SELECT rep, bc.countyID, ISNULL(cast(DATA.total as int),0) AS total"
+                            + " FROM BOGODashboardsCounties bc left JOIN"
+                            + " (SELECT e.emp_last AS Rep, ess.JQMCountyId, SUM((CASE WHEN ess.invoice_date >= @currbeg AND ess.invoice_date <= @currend then ess.BaseQty ELSE 0 end) * (CASE WHEN ess.essoptype = 4 THEN - 1 ELSE 1 END)) AS total"
+                            + " FROM ExecSummarySales ess INNER JOIN GPSItemMaster gm ON ess.ITEMNMBR = gm.ITEMNMBR"
+                            + " INNER JOIN Employees e ON ess.salesman = e.emp_id"
+                            + " LEFT JOIN webhub.dbo.Segments s ON ess.Segment = s.Name"
+                            + " LEFT JOIN webhub.dbo.EmployeeGroups eg ON ess.RepGroup = eg.Name"
+                            + " INNER JOIN BOGODashboardsCounties bc ON ess.JQMCountyId = bc.countyID"
+                            + " WHERE eg.Name IN (" + criteria.Groups + ") and ess.invoice_date >=";
+
+                        if (currend < currbeg.AddYears(1))
+                        {
+                            sqlstring = sqlstring + " @priorbeg ";
+                        }
+                        else
+                        {
+                            sqlstring = sqlstring + " @currbeg ";
+                        }
+
+                        sqlstring = sqlstring + " AND ess.invoice_date <= @currend ";
+
+                        if (!string.IsNullOrEmpty(company))
+                            sqlstring = sqlstring + " AND ess.Company=@company ";
+
+                        if (!string.IsNullOrEmpty(whereclause))
+                            sqlstring = sqlstring + " AND  " + whereclause;
+
+                        if (criteria.Filter1 != string.Empty)
+                            sqlstring = sqlstring + " AND (" + filterfieldname1 + " = @filter1)";
+                        if (criteria.Filter2 != string.Empty)
+                            sqlstring = sqlstring + " AND (" + filterfieldname2 + " = @filter2)";
+
+
+                        sqlstring = sqlstring + "  GROUP BY e.emp_last, ess.JQMCountyId) AS Data ON Data.JQMCountyId=bc.countyID"
+                            + " ORDER BY bc.countyID, total desc";
+                        details = db.Query<CountyResults>(sqlstring, new { @whereclause = whereclause, @company = company, @priorbeg = priorbeg, @currbeg = currbeg, @priorend = priorend, @currend = currend, @filter1 = criteria.Filter1, @filter2 = criteria.Filter2 }).ToList();
+
                     }
 
+                    // fill in some rep details for the display - top 3 reps then add everyone else into all others.
+
+                    foreach (var row in results)
+                    {
+                        row.otherstotal = "0";
+                        row.displaytext = "";
+                        int repnmbr = 1;
+                        var reps = details.Where(o => o.countyID == row.countyID && o.total != "0").ToList();
+                        if (reps.Count != 0)
+                        {
+                            if (reps.Count > maxnmbr)
+                                maxnmbr = reps.Count;
+
+                            foreach (var rep in reps)
+                            {
+
+                                if (repnmbr == 1)
+                                {
+                                    row.rep1 = rep.rep;
+                                    row.rep1total = rep.total;
+                                    row.displaytext = rep.rep + ": " + rep.total;
+                                }
+                                else if (repnmbr == 2)
+                                {
+                                    row.rep2 = rep.rep;
+                                    row.rep2total = rep.total;
+
+                                    if (row.displaytext != "")
+                                        row.displaytext = row.displaytext + Environment.NewLine;
+                                    row.displaytext = row.displaytext + rep.rep + ": " + rep.total;
+                                }
+                                else if (repnmbr == 3)
+                                {
+                                    row.rep3 = rep.rep;
+                                    row.rep3total = rep.total;
+                                    if (row.displaytext != "")
+                                        row.displaytext = row.displaytext + Environment.NewLine;
+                                    row.displaytext = row.displaytext + rep.rep + ": " + rep.total;
+                                }
+                                else
+                                {
+                                    row.otherstotal = (Int32.Parse(row.otherstotal) + Int32.Parse(rep.total)).ToString();
+                                }
+                                repnmbr = repnmbr + 1;
+                            }
+                            if (row.otherstotal == "0")
+                                row.otherstotal = "";
+                            else
+                            {
+                                row.otherstotal = "  Others: " + row.otherstotal;
+                                row.displaytext = row.displaytext + Environment.NewLine;
+                                row.displaytext = row.displaytext + row.otherstotal;
+                            }
+                        }
+
+
+                    }
 
 
 

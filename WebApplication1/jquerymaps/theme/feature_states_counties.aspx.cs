@@ -40,7 +40,7 @@ public partial class jquerymaps_theme_feature_states_counties : System.Web.UI.Pa
 
                     if (category_str != "")
                     {
-                        Response.Write("<feature id=\"" + rd.countryID.ToString() + "_" + rd.stateID.ToString() + "_" + rd.countyID.ToString() + "\" category=\"" + category_str + "\" label=\"" + Server.HtmlEncode(rd.county.ToString()) + "\" popup=\"" + Convert.ToDouble(rd.total.ToString()).ToString("##,##0") + "\" />\n");
+                        Response.Write("<feature id=\"" + rd.countryID.ToString() + "_" + rd.stateID.ToString() + "_" + rd.countyID.ToString() + "\" category=\"" + category_str + "\" label=\"" + Server.HtmlEncode(rd.county.ToString()) + "\" popup=\"" + "Total " + WebApplication1.Models.Globals.DashboardUM + ": " + Convert.ToDouble(rd.total.ToString()).ToString("##,##0") + "\" />\n");
                     }
                 }
 

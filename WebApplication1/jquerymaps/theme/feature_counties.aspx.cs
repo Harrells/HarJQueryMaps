@@ -38,11 +38,11 @@ public partial class jquerymaps_theme_feature_counties : System.Web.UI.Page
                 if (range != null)
                     category_str = "county_" + range.rangeID;
 
+
                 if (category_str != "")
                 {
-                    Response.Write("<feature id=\"" + rd.countryID.ToString() + "_" + rd.stateID.ToString() + "_" + rd.countyID.ToString() + "\" category=\"" + category_str + "\" label=\"" + Server.HtmlEncode(rd.county.ToString()) + "\" popup=\"" + Convert.ToDouble(rd.total.ToString()).ToString("##,##0") + "\" >\n");
-                    // made change from county to rep so that rep shows up where county does when you zoom to state.
-                    //Response.Write("<feature id=\"" + rd["countryID"].ToString() + "_" + rd["stateID"].ToString() + "_" + rd["countyID"].ToString() + "\" category=\"" + category_str + "\" label=\"" + Server.HtmlEncode(rd["county"].ToString()) + "\" popup=\"" + Convert.ToDouble(rd["total"].ToString()).ToString("##,##0") + "\" Sales=\"" + Convert.ToDouble(rd["CurSalesTotal"].ToString()).ToString("##,##0") + "\" salesRep=\"" + rd["rep"].ToString() + "\" >\n");
+                    //Response.Write("<feature id=\"" + rd.countryID.ToString() + "_" + rd.stateID.ToString() + "_" + rd.countyID.ToString() + "\" category=\"" + category_str + "\" label=\"" + Server.HtmlEncode(rd.county.ToString()) + "\" popup=\"" + "Total " + WebApplication1.Models.Globals.DashboardUM + ": " + Convert.ToDouble(rd.total.ToString()).ToString("##,##0") + " " +  rd.rep1 + ": " + rd.rep1total + " " + rd.rep2 + ": " + rd.rep2total + "   " + rd.rep3 + ": " + rd.rep3total +  rd.otherstotal + "\" >\n");
+                    Response.Write("<feature id=\"" + rd.countryID.ToString() + "_" + rd.stateID.ToString() + "_" + rd.countyID.ToString() + "\" category=\"" + category_str + "\" label=\"" + Server.HtmlEncode(rd.county.ToString()) + "\" popup=\"" + "Total " + WebApplication1.Models.Globals.DashboardUM + ": " + Convert.ToDouble(rd.total.ToString()).ToString("##,##0") + " " + rd.displaytext  + "\" >\n");
                     Response.Write("<action event=\"onClick\" target=\"loadChild\" url=\"us_county.aspx?id=##id##\" />");
                     Response.Write("</feature>");
                 }

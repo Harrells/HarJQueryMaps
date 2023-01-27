@@ -1,5 +1,5 @@
-<jqm_markers
-<marker id='1' category='city' label='MiamiDade' lat='25.7738889' lon='-80.1938889' population='425,986' />
-<marker id='2' category='city' label='Omaha' lat='41.2586111' lon='-95.9375' population='430,227' />
-<marker id='3' category='city' label='Cleveland' lat='41.4994444' lon='-81.6955556' population='431,908' />
-</jqm_markers>
+<?xml version="1.0" encoding="UTF-8"?>
+<jqm_markerCategories xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xsd/jqm_markerCategories.xsd">
+	<category id="location" enabled="true">
+		<markerStyle event="onMouseOut" iconUrl="../../images/icons/location.png" scale="1" opacity="1" visible="true"/>
+</jqm_markerCategories>
