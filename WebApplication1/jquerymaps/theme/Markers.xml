@@ -1,5 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jqm_markers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../xsd/jqm_markers.xsd">
-    <marker id="14792" category="location" label="New York" lat="40.67" lon="-73.94" popup="Population: 8.175.133"/>
-    <marker id="2141" category="location" label="Los Angeles" lat="34.0522222" lon="-118.2427778" popup="Population: 3.792.621"/>
-</jqm_markers>
+<jqm_markers xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../xsd/jqm_markers.xsd">
+  <marker id="2" category="location" label="Auburn Warehouse" lat="42.2006" lon="-71.8205" popup="508-832-5008" />
+  <marker id="4" category="location" label="Butler Warehouse" lat="40.9665" lon="-79.9691" popup="800-557-5157" />
+  <marker id="5" category="location" label="Charlotte Warehouse" lat="35.1128" lon="-80.9537" popup="704-504-3559" />
+  <marker id="6" category="location" label="Lombard Warehouse" lat="41.8417" lon="-88.0206" popup="630-424-0040" />
+  <marker id="8" category="location" label="New Milford Warehouse" lat="41.5241" lon="-73.426" popup="860-350-0382" />
+  <marker id="9" category="location" label="Homestead Warehouse" lat="25.4761" lon="-80.4915" popup="305-247-8663" />
+  <marker id="10" category="location" label="Lakeland Warehouse" lat="28.04" lon="-82.0287" popup="800-282-8007" />
+  <marker id="11" category="location" label="Livonia Warehouse" lat="42.3763" lon="-83.3855" popup="734-744-6013" />
+  <marker id="12" category="location" label="Whitestown Warehouse" lat="39.9957" lon="-86.3478" popup="800-966-1987" />
+  <marker id="13" category="location" label="Sylacauga Warehouse" lat="33.1695" lon="-86.292" popup="866-245-5559" />
+  <marker id="14" category="location" label="York Warehouse" lat="40.0507" lon="-76.7419" popup="888-403-3600" />
+  <marker id="17" category="location" label="Corporate Office" lat="28.036" lon="-82.0287" popup="800-282-8007" />
+  <marker id="21" category="location" label="Houston Warehouse" lat="29.9641" lon="-95.3725" popup="281-223-1212" />
+  <marker id="23" category="location" label="Avon Park" lat="27.6179" lon="-81.4362" popup="863-400-5420" />
+  <marker id="24" category="location" label="Carrollton Warehouse" lat="32.944" lon="-96.9203" popup="972-395-5353" />
+  <marker id="25" category="location" label="Oklahoma City Warehouse" lat="35.4338" lon="-97.6056" popup="405-225-0250" />
+  <marker id="26" category="location" label="New Braunfels Warehouse" lat="29.6915" lon="-98.1599" popup="830-214-1439" />
+  <marker id="27" category="location" label="Vista Warehouse" lat="33.1463" lon="-117.224" popup="760-260-9060" />
+  <marker id="29" category="location" label="Sante Fe Springs Warehouse" lat="33.9479" lon="-118.064" popup="562-239-2392" />
+  <marker id="30" category="location" label="Bay Area - CA Warehouse" lat="36.9233" lon="-121.791" popup="831-205-7100" />
+  <marker id="31" category="location" label="Phoenix Warehouse" lat="33.6972" lon="-112.087" popup="(630) 327-5648" />
+  <marker id="34" category="location" label="Chattanooga Warehouse" lat="35.0723" lon="-85.2649" popup="" />
+  <marker id="35" category="location" label="Indio Warehouse" lat="33.7201" lon="-116.203" popup="" />
+  <marker id="36" category="location" label="Denver Warehouse" lat="38.878" lon="-104.84" popup="719-590-8884" />
+  <marker id="37" category="location" label="Atlanta" lat="33.7551" lon="-84.553" popup="470-568-4412" />
+  <marker id="38" category="location" label="Columbus Warehouse" lat="39.8588" lon="-82.9013" popup="" />
+  <marker id="39" category="location" label="Syracuse Warehouse" lat="43.0928" lon="-75.7495" popup="" />
+  <marker id="40" category="location" label="Richmond Warehouse" lat="37.5066" lon="-77.3478" popup="" />
+  <marker id="41" category="location" label="Lubbock Warehouse" lat="33.4789" lon="-102.023" popup="" />
+  </jqm_markers>

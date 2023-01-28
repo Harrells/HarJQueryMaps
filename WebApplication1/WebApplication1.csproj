@@ -145,6 +145,14 @@
       <DependentUpon>feature_counties.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
     </Compile>
+    <Compile Include="jquerymaps\theme\feature_markercategories.aspx.cs">
+      <DependentUpon>feature_markercategories.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="jquerymaps\theme\feature_markers.aspx.cs">
+      <DependentUpon>feature_markers.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
     <Compile Include="jquerymaps\theme\feature_states_counties.aspx.cs">
       <DependentUpon>feature_states_counties.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -248,6 +256,7 @@
     <Content Include="hostingstart.html" />
     <Content Include="index.html" />
     <Content Include="jquerymaps\images\blueDot.png" />
+    <Content Include="jquerymaps\images\blueDotSmall.png" />
     <Content Include="jquerymaps\images\icons\location.png" />
     <Content Include="jquerymaps\images\misc\spinner.gif" />
     <Content Include="jquerymaps\images\misc\transparent.gif" />
@@ -3548,6 +3557,8 @@
     <Content Include="jquerymaps\maps\us_zipcodes_by_county\fm-us_78030.xml" />
     <Content Include="jquerymaps\theme\feature_categories.aspx" />
     <Content Include="jquerymaps\theme\feature_counties.aspx" />
+    <Content Include="jquerymaps\theme\feature_markercategories.aspx" />
+    <Content Include="jquerymaps\theme\feature_markers.aspx" />
     <Content Include="jquerymaps\theme\feature_states_counties.aspx" />
     <Content Include="jquerymaps\theme\MarkerCategories.xml" />
     <Content Include="jquerymaps\theme\Markers.xml" />
