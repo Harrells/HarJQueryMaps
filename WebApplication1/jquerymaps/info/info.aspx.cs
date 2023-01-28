@@ -49,7 +49,7 @@ public partial class jquerymaps_info_info : System.Web.UI.Page
                 }
 
 
-                displaytotal =label + ": " + Convert.ToDouble(calctotal.ToString("##,##0"));
+                displaytotal =label + ": " + Convert.ToDouble(calctotal.ToString()).ToString("##,##0");
 
                 //this appears under the legend box
                 info += "<div class='top'>Total " + WebApplication1.Models.Globals.DashboardUM + "</div>";

@@ -276,7 +276,7 @@ namespace WebApplication1.Business_Rules
                                 {
                                     row.rep1 = rep.rep;
                                     row.rep1total = rep.total;
-                                    row.displaytext = rep.rep + ": " + rep.total;
+                                    row.displaytext = rep.rep + ": " + Convert.ToDouble(rep.total.ToString()).ToString("##,##0");
                                 }
                                 else if (repnmbr == 2)
                                 {
@@ -285,7 +285,7 @@ namespace WebApplication1.Business_Rules
 
                                     if (row.displaytext != "")
                                         row.displaytext = row.displaytext + Environment.NewLine;
-                                    row.displaytext = row.displaytext + rep.rep + ": " + rep.total;
+                                    row.displaytext = row.displaytext + rep.rep + ": " + Convert.ToDouble(rep.total.ToString()).ToString("##,##0");
                                 }
                                 else if (repnmbr == 3)
                                 {
@@ -293,7 +293,7 @@ namespace WebApplication1.Business_Rules
                                     row.rep3total = rep.total;
                                     if (row.displaytext != "")
                                         row.displaytext = row.displaytext + Environment.NewLine;
-                                    row.displaytext = row.displaytext + rep.rep + ": " + rep.total;
+                                    row.displaytext = row.displaytext + rep.rep + ": " + Convert.ToDouble(rep.total.ToString()).ToString("##,##0");
                                 }
                                 else
                                 {
@@ -305,7 +305,7 @@ namespace WebApplication1.Business_Rules
                                 row.otherstotal = "";
                             else
                             {
-                                row.otherstotal = "  Others: " + row.otherstotal;
+                                row.otherstotal = "  Others: " + Convert.ToDouble(row.otherstotal.ToString()).ToString("##,##0");
                                 row.displaytext = row.displaytext + Environment.NewLine;
                                 row.displaytext = row.displaytext + row.otherstotal;
                             }
