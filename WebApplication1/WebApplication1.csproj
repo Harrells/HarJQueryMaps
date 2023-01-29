@@ -261,6 +261,7 @@
     <Content Include="jquerymaps\images\misc\spinner.gif" />
     <Content Include="jquerymaps\images\misc\transparent.gif" />
     <Content Include="jquerymaps\images\orangeDot.png" />
+    <Content Include="jquerymaps\images\plantMarker.png" />
     <Content Include="jquerymaps\images\toolbars\back.png" />
     <Content Include="jquerymaps\images\toolbars\backOver.png" />
     <Content Include="jquerymaps\images\toolbars\fullScreen.png" />
@@ -270,6 +271,7 @@
     <Content Include="jquerymaps\images\toolbars\zoomInOver.png" />
     <Content Include="jquerymaps\images\toolbars\zoomOut.png" />
     <Content Include="jquerymaps\images\toolbars\zoomOutOver.png" />
+    <Content Include="jquerymaps\images\warehouseMarker.png" />
     <Content Include="jquerymaps\info\info.aspx" />
     <Content Include="jquerymaps\info\legend.aspx" />
     <Content Include="jquerymaps\jqm_authorization.txt" />

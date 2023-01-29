@@ -38,6 +38,8 @@ namespace WebApplication1.Business_Rules
                     if (dashboardinfo == null)
                         return new List<CountyResults>();
 
+                    Models.Globals.SumFieldName = dashboardinfo.SumFieldName;
+
                     // fill global ranges list
                     sqlstring = "SELECT br.rangeID, br.range_level, range, br.range_min, br.range_max, br.range_color"
                         + " FROM BOGODashboardsRanges br"
@@ -182,7 +184,7 @@ namespace WebApplication1.Business_Rules
 
                         sqlstring = "SELECT bc.countryID, bc.stateID, bc.countyID, bc.county, bc.StateName as state, ISNULL(DATA.total,0) AS total"
                             + " FROM BOGODashboardsCounties bc left JOIN"
-                            + " (SELECT ess.JQMCountyId, SUM((CASE WHEN ess.invoice_date >= @currbeg AND ess.invoice_date <= @currend then ess.BaseQty ELSE 0 end) * (CASE WHEN ess.essoptype = 4 THEN - 1 ELSE 1 END)) AS total"
+                            + " (SELECT ess.JQMCountyId, SUM((CASE WHEN ess.invoice_date >= @currbeg AND ess.invoice_date <= @currend then ess." + Models.Globals.SumFieldName + "  ELSE 0 end) * (CASE WHEN ess.essoptype = 4 THEN - 1 ELSE 1 END)) AS total"
                             + " FROM ExecSummarySales ess INNER JOIN GPSItemMaster gm ON ess.ITEMNMBR = gm.ITEMNMBR"
                             + " INNER JOIN Employees e ON ess.salesman = e.emp_id"
                             + " LEFT JOIN webhub.dbo.Segments s ON ess.Segment = s.Name"
@@ -219,7 +221,7 @@ namespace WebApplication1.Business_Rules
 
                         sqlstring = "SELECT rep, bc.countyID, ISNULL(cast(DATA.total as int),0) AS total"
                             + " FROM BOGODashboardsCounties bc left JOIN"
-                            + " (SELECT e.emp_last AS Rep, ess.JQMCountyId, SUM((CASE WHEN ess.invoice_date >= @currbeg AND ess.invoice_date <= @currend then ess.BaseQty ELSE 0 end) * (CASE WHEN ess.essoptype = 4 THEN - 1 ELSE 1 END)) AS total"
+                            + " (SELECT e.emp_last AS Rep, ess.JQMCountyId, SUM((CASE WHEN ess.invoice_date >= @currbeg AND ess.invoice_date <= @currend then ess." + Models.Globals.SumFieldName + "  ELSE 0 end) * (CASE WHEN ess.essoptype = 4 THEN - 1 ELSE 1 END)) AS total"
                             + " FROM ExecSummarySales ess INNER JOIN GPSItemMaster gm ON ess.ITEMNMBR = gm.ITEMNMBR"
                             + " INNER JOIN Employees e ON ess.salesman = e.emp_id"
                             + " LEFT JOIN webhub.dbo.Segments s ON ess.Segment = s.Name"

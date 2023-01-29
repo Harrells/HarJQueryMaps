@@ -15,6 +15,7 @@ namespace WebApplication1.Models
         public static string Filter2 { get; set; }
         public static string Groups { get; set; }
         public static string DashboardUM { get; set; }
+        public static string SumFieldName { get; set; }
         public static List<CountyResults> Results { get; set; }
         public static List<Ranges> MapRanges { get; set; }
 
