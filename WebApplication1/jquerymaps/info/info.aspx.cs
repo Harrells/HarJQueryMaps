@@ -41,14 +41,14 @@ public partial class jquerymaps_info_info : System.Web.UI.Page
                 double calctotal = 0;
                 foreach (var rec in results)
                 {
-                    calctotal = calctotal + Convert.ToDouble(rec.total);
+                    calctotal = calctotal + Convert.ToDouble(rec.realtotal);
                     if (label == "state")
                         label = rec.state;
                     else if (label == "county") 
                         label = rec.county;
                 }
 
-
+                calctotal = Math.Truncate(calctotal +.5);
                 displaytotal =label + ": " + Convert.ToDouble(calctotal.ToString()).ToString("##,##0");
 
                 //this appears under the legend box

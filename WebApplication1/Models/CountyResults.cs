@@ -14,6 +14,7 @@ namespace WebApplication1.Models
         public string zipID { get; set; }
         public string state { get; set; }
         public string total { get; set; }
+        public string realtotal { get; set; }
         public string rep1 { get; set; }
         public string rep1total { get; set; }
         public string rep2 { get; set; }

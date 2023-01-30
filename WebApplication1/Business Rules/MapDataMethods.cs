@@ -128,7 +128,7 @@ namespace WebApplication1.Business_Rules
                     {
                         // polyon dashboard is slightly different
 
-                        sqlstring = "SELECT bc.countryID, bc.stateID, bc.countyID, bc.county, bc.StateName as state, cast(ISNULL(DATA.total,0) as int) AS total"
+                        sqlstring = "SELECT bc.countryID, bc.stateID, bc.countyID, bc.county, bc.StateName as state, ISNULL(DATA.total,0)  AS total"
                             + " FROM BOGODashboardsCounties bc left JOIN"
                             + " (SELECT  r.JQMCountyId, SUM(ROUND((CASE WHEN(Year = @fromyear AND Month >= @frommonth) AND(Year = @toyear AND Month <= @tomonth) THEN QtyTons ELSE 0 END), 2)) AS total"
                             + " FROM RawSalesHistoryByCounty r INNER JOIN webhub.dbo.employees we ON r.SLPRSNID = we.ImportKey"
@@ -153,7 +153,7 @@ namespace WebApplication1.Business_Rules
 
                         results = db.Query<CountyResults>(sqlstring, new { @fromyear = fromyear, @frommonth = frommonth, @toyear = toyear, @tomonth = tomonth, @priorfromyear = priorfromyear, @priortoyear = priortoyear, @filter1 = criteria.Filter1, @filter2 = criteria.Filter2 }).ToList();
 
-                        sqlstring = "SELECT Data.Rep, bc.countyID, cast(ISNULL(DATA.total,0) as int) AS total"
+                        sqlstring = "SELECT Data.Rep, bc.countyID, ISNULL(DATA.total,0)  AS total"
                             + " FROM BOGODashboardsCounties bc left JOIN"
                             + " (SELECT we.LastName AS Rep,  r.JQMCountyId, SUM(ROUND((CASE WHEN (Year = @fromyear AND Month >= @frommonth) AND  (Year = @toyear AND Month <= @tomonth) THEN QtyTons ELSE 0 END), 2)) AS total "
                             + " FROM RawSalesHistoryByCounty r INNER JOIN webhub.dbo.employees we ON r.SLPRSNID = we.ImportKey"
@@ -182,7 +182,7 @@ namespace WebApplication1.Business_Rules
                     {
                         // not the polyon dashboard
 
-                        sqlstring = "SELECT bc.countryID, bc.stateID, bc.countyID, bc.county, bc.StateName as state, cast(ISNULL(DATA.total,0) as int) AS total"
+                        sqlstring = "SELECT bc.countryID, bc.stateID, bc.countyID, bc.county, bc.StateName as state, ISNULL(DATA.total,0)  AS total"
                             + " FROM BOGODashboardsCounties bc left JOIN"
                             + " (SELECT ess.JQMCountyId, SUM((CASE WHEN ess.invoice_date >= @currbeg AND ess.invoice_date <= @currend then ess." + Models.Globals.SumFieldName + "  ELSE 0 end) * (CASE WHEN ess.essoptype = 4 THEN - 1 ELSE 1 END)) AS total"
                             + " FROM ExecSummarySales ess INNER JOIN GPSItemMaster gm ON ess.ITEMNMBR = gm.ITEMNMBR"
@@ -219,7 +219,7 @@ namespace WebApplication1.Business_Rules
                             + " ORDER BY bc.countyID";
                         results = db.Query<CountyResults>(sqlstring, new { @whereclause = whereclause, @company = company, @priorbeg = priorbeg, @currbeg = currbeg, @priorend = priorend, @currend = currend, @filter1 = criteria.Filter1, @filter2 = criteria.Filter2 }).ToList();
 
-                        sqlstring = "SELECT rep, bc.countyID, cast(ISNULL(DATA.total,0) as int) AS total"
+                        sqlstring = "SELECT rep, bc.countyID, ISNULL(DATA.total,0)  AS total"
                             + " FROM BOGODashboardsCounties bc left JOIN"
                             + " (SELECT e.emp_last AS Rep, ess.JQMCountyId, SUM((CASE WHEN ess.invoice_date >= @currbeg AND ess.invoice_date <= @currend then ess." + Models.Globals.SumFieldName + "  ELSE 0 end) * (CASE WHEN ess.essoptype = 4 THEN - 1 ELSE 1 END)) AS total"
                             + " FROM ExecSummarySales ess INNER JOIN GPSItemMaster gm ON ess.ITEMNMBR = gm.ITEMNMBR"
@@ -257,12 +257,21 @@ namespace WebApplication1.Business_Rules
                         details = db.Query<CountyResults>(sqlstring, new { @whereclause = whereclause, @company = company, @priorbeg = priorbeg, @currbeg = currbeg, @priorend = priorend, @currend = currend, @filter1 = criteria.Filter1, @filter2 = criteria.Filter2 }).ToList();
 
                     }
-
                     // fill in some rep details for the display - top 3 reps then add everyone else into all others.
 
                     foreach (var row in results)
                     {
                         int rowtotal = 0;
+
+                        row.realtotal = row.total;
+                        double temptotal = Convert.ToDouble(row.total);
+                        temptotal = temptotal + .5;
+                        temptotal = Math.Truncate(temptotal);
+                        if (temptotal == 0)
+                            row.total = "0";
+                        else
+                            row.total = temptotal.ToString();
+                        rowtotal = 0;
                         row.otherstotal = "0";
                         row.displaytext = "";
                         int repnmbr = 1;
@@ -274,17 +283,19 @@ namespace WebApplication1.Business_Rules
 
                             foreach (var rep in reps)
                             {
-                                rowtotal = rowtotal + Int32.Parse(rep.total);
+                                temptotal = Convert.ToDouble(rep.total);
+                                temptotal = temptotal + .5;
+                                rowtotal = rowtotal + (int)temptotal;
                                 if (repnmbr == 1)
                                 {
                                     row.rep1 = rep.rep;
-                                    row.rep1total = rep.total;
+                                    row.rep1total = rowtotal.ToString();
                                     row.displaytext = rep.rep + ": " + Convert.ToDouble(rep.total.ToString()).ToString("##,##0");
                                 }
                                 else if (repnmbr == 2)
                                 {
                                     row.rep2 = rep.rep;
-                                    row.rep2total = rep.total;
+                                    row.rep2total = rowtotal.ToString();
 
                                     if (row.displaytext != "")
                                         row.displaytext = row.displaytext + Environment.NewLine;
@@ -293,14 +304,18 @@ namespace WebApplication1.Business_Rules
                                 else if (repnmbr == 3)
                                 {
                                     row.rep3 = rep.rep;
-                                    row.rep3total = rep.total;
+                                    row.rep3total = rowtotal.ToString();
                                     if (row.displaytext != "")
                                         row.displaytext = row.displaytext + Environment.NewLine;
                                     row.displaytext = row.displaytext + rep.rep + ": " + Convert.ToDouble(rep.total.ToString()).ToString("##,##0");
                                 }
                                 else
                                 {
-                                    row.otherstotal = (Int32.Parse(row.otherstotal) + Int32.Parse(rep.total)).ToString();
+
+                                    double othtotal = Convert.ToDouble(rep.otherstotal);
+                                    othtotal = othtotal + Convert.ToDouble(rep.realtotal) + .5;
+
+                                    row.otherstotal = othtotal.ToString();
                                 }
                                 repnmbr = repnmbr + 1;
                             }
@@ -308,7 +323,8 @@ namespace WebApplication1.Business_Rules
                                 row.otherstotal = "";
                             else
                             {
-                                row.otherstotal = "  Others: " + Convert.ToDouble(row.otherstotal.ToString()).ToString("##,##0");
+                                double otherstotal = Convert.ToDouble(row.otherstotal) + .5;
+                                row.otherstotal = "  Others: " + otherstotal.ToString("##,##0");
                                 row.displaytext = row.displaytext + Environment.NewLine;
                                 row.displaytext = row.displaytext + row.otherstotal;
                             }
@@ -316,14 +332,11 @@ namespace WebApplication1.Business_Rules
 
                         if (rowtotal != Int32.Parse(row.total))
                             row.total = rowtotal.ToString();
-
                     }
-
-
-
                     return results;
                 }
             }
+
             catch (Exception ex)
             {
                 throw ex;
