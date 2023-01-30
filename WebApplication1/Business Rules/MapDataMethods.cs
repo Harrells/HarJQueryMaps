@@ -128,7 +128,7 @@ namespace WebApplication1.Business_Rules
                     {
                         // polyon dashboard is slightly different
 
-                        sqlstring = "SELECT bc.countryID, bc.stateID, bc.countyID, bc.county, bc.StateName as state, ISNULL(DATA.total,0) AS total"
+                        sqlstring = "SELECT bc.countryID, bc.stateID, bc.countyID, bc.county, bc.StateName as state, cast(ISNULL(DATA.total,0) as int) AS total"
                             + " FROM BOGODashboardsCounties bc left JOIN"
                             + " (SELECT  r.JQMCountyId, SUM(ROUND((CASE WHEN(Year = @fromyear AND Month >= @frommonth) AND(Year = @toyear AND Month <= @tomonth) THEN QtyTons ELSE 0 END), 2)) AS total"
                             + " FROM RawSalesHistoryByCounty r INNER JOIN webhub.dbo.employees we ON r.SLPRSNID = we.ImportKey"
@@ -153,7 +153,7 @@ namespace WebApplication1.Business_Rules
 
                         results = db.Query<CountyResults>(sqlstring, new { @fromyear = fromyear, @frommonth = frommonth, @toyear = toyear, @tomonth = tomonth, @priorfromyear = priorfromyear, @priortoyear = priortoyear, @filter1 = criteria.Filter1, @filter2 = criteria.Filter2 }).ToList();
 
-                        sqlstring = "SELECT Data.Rep, bc.countyID, ISNULL(cast(DATA.total as int),0) AS total"
+                        sqlstring = "SELECT Data.Rep, bc.countyID, cast(ISNULL(DATA.total,0) as int) AS total"
                             + " FROM BOGODashboardsCounties bc left JOIN"
                             + " (SELECT we.LastName AS Rep,  r.JQMCountyId, SUM(ROUND((CASE WHEN (Year = @fromyear AND Month >= @frommonth) AND  (Year = @toyear AND Month <= @tomonth) THEN QtyTons ELSE 0 END), 2)) AS total "
                             + " FROM RawSalesHistoryByCounty r INNER JOIN webhub.dbo.employees we ON r.SLPRSNID = we.ImportKey"
@@ -182,7 +182,7 @@ namespace WebApplication1.Business_Rules
                     {
                         // not the polyon dashboard
 
-                        sqlstring = "SELECT bc.countryID, bc.stateID, bc.countyID, bc.county, bc.StateName as state, ISNULL(DATA.total,0) AS total"
+                        sqlstring = "SELECT bc.countryID, bc.stateID, bc.countyID, bc.county, bc.StateName as state, cast(ISNULL(DATA.total,0) as int) AS total"
                             + " FROM BOGODashboardsCounties bc left JOIN"
                             + " (SELECT ess.JQMCountyId, SUM((CASE WHEN ess.invoice_date >= @currbeg AND ess.invoice_date <= @currend then ess." + Models.Globals.SumFieldName + "  ELSE 0 end) * (CASE WHEN ess.essoptype = 4 THEN - 1 ELSE 1 END)) AS total"
                             + " FROM ExecSummarySales ess INNER JOIN GPSItemMaster gm ON ess.ITEMNMBR = gm.ITEMNMBR"
@@ -219,7 +219,7 @@ namespace WebApplication1.Business_Rules
                             + " ORDER BY bc.countyID";
                         results = db.Query<CountyResults>(sqlstring, new { @whereclause = whereclause, @company = company, @priorbeg = priorbeg, @currbeg = currbeg, @priorend = priorend, @currend = currend, @filter1 = criteria.Filter1, @filter2 = criteria.Filter2 }).ToList();
 
-                        sqlstring = "SELECT rep, bc.countyID, ISNULL(cast(DATA.total as int),0) AS total"
+                        sqlstring = "SELECT rep, bc.countyID, cast(ISNULL(DATA.total,0) as int) AS total"
                             + " FROM BOGODashboardsCounties bc left JOIN"
                             + " (SELECT e.emp_last AS Rep, ess.JQMCountyId, SUM((CASE WHEN ess.invoice_date >= @currbeg AND ess.invoice_date <= @currend then ess." + Models.Globals.SumFieldName + "  ELSE 0 end) * (CASE WHEN ess.essoptype = 4 THEN - 1 ELSE 1 END)) AS total"
                             + " FROM ExecSummarySales ess INNER JOIN GPSItemMaster gm ON ess.ITEMNMBR = gm.ITEMNMBR"
@@ -262,6 +262,7 @@ namespace WebApplication1.Business_Rules
 
                     foreach (var row in results)
                     {
+                        int rowtotal = 0;
                         row.otherstotal = "0";
                         row.displaytext = "";
                         int repnmbr = 1;
@@ -273,7 +274,7 @@ namespace WebApplication1.Business_Rules
 
                             foreach (var rep in reps)
                             {
-
+                                rowtotal = rowtotal + Int32.Parse(rep.total);
                                 if (repnmbr == 1)
                                 {
                                     row.rep1 = rep.rep;
@@ -313,6 +314,8 @@ namespace WebApplication1.Business_Rules
                             }
                         }
 
+                        if (rowtotal != Int32.Parse(row.total))
+                            row.total = rowtotal.ToString();
 
                     }
 

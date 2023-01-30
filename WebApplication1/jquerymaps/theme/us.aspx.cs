@@ -11,8 +11,9 @@ public partial class jquerymaps_theme_us : System.Web.UI.Page
         theme_str += "reloadInterval=\"\" reloadFeatures=\"false\" reloadFeatureCategories=\"false\" reloadMarkers=\"false\" reloadMarkerCategories=\"false\" ";
         theme_str += "featuresUrl=\"feature_states_counties.aspx\" featureCategoriesUrl=\"feature_categories.aspx?l=county\" ";
         //theme_str += "markersUrl=\"\" markerCategoriesUrl=\"\" >";
-        //theme_str += "markersUrl=\"feature_markers.aspx\" MarkerCategoriesUrl=\"feature_markercategories.aspx\" >";
-        theme_str += "markersUrl=\"Markers.xml\" markerCategoriesUrl=\"MarkerCategories.xml\" >";
+        //theme_str += "markersUrl=\"feature_markers.aspx\" markerCategoriesUrl=\"feature_markercategories.aspx\" >";
+        //theme_str += "markersUrl=\"Markers.xml\" markerCategoriesUrl=\"MarkerCategories.xml\" >";
+        theme_str += "markersUrl=\"feature_markers.aspx\" markerCategoriesUrl=\"MarkerCategories.xml\" >";
 
         Response.Write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         Response.Write(theme_str);

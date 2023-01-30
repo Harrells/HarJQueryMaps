@@ -11,7 +11,8 @@ public partial class jquerymaps_theme_us_state : System.Web.UI.Page
         theme_str += "id=\"" + id + "\" shapesUrl=\"../maps/us_counties_by_state/fm-us_" + id + ".xml\" backgroundImageUrl=\"\" ";
         theme_str += "reloadInterval=\"\" reloadFeatures=\"false\" reloadFeatureCategories=\"false\" reloadMarkers=\"false\" reloadMarkerCategories=\"false\" ";
         theme_str += "featuresUrl=\"feature_counties.aspx?id=" + id + "\" featureCategoriesUrl=\"feature_categories.aspx?l=county\" ";
-        theme_str += "markersUrl=\"\" markerCategoriesUrl=\"\" >";
+        //theme_str += "markersUrl=\"\" markerCategoriesUrl=\"\" >";
+        theme_str += "markersUrl=\"feature_markers.aspx\" markerCategoriesUrl=\"MarkerCategories.xml\" >";
 
         Response.Write("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         Response.Write(theme_str);

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jqm_markerCategories xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../xsd/jqm_markerCategories.xsd">
 	<category id="location" enabled="true">
-		<markerStyle event="onMouseOut" iconUrl="../images/warehouseMarker.png" scale=".1" opacity="1" visible="true"/>
+		<markerStyle event="onMouseOut" iconUrl="../images/warehouseMarkersmall.png" scale="1" opacity="1" visible="true"/>
     <action event="onMouseOver" target="infowindow" infoWindowDiv="jqm_popup" align="mouse,10,10" />
     <action event="onClick" target="js" jsFunction="jqmDisplayMarkerPopup"/>
   </category>
   <category id="plant" enabled="true">
-    <markerStyle event="onMouseOut" iconUrl="../images/plantMarker.png" scale=".1" opacity="1" visible="true"/>
+    <markerStyle event="onMouseOut" iconUrl="../images/plantMarkersmall.png" scale="1" opacity="1" visible="true"/>
     <action event="onMouseOver" target="infowindow" infoWindowDiv="jqm_popup" align="mouse,10,10" />
     <action event="onClick" target="js" jsFunction="jqmDisplayMarkerPopup"/>
   </category>
