@@ -286,16 +286,17 @@ namespace WebApplication1.Business_Rules
                                 temptotal = Convert.ToDouble(rep.total);
                                 temptotal = temptotal + .5;
                                 rowtotal = rowtotal + (int)temptotal;
+                                temptotal = (int)temptotal;
                                 if (repnmbr == 1)
                                 {
                                     row.rep1 = rep.rep;
-                                    row.rep1total = rowtotal.ToString();
+                                    row.rep1total = temptotal.ToString();
                                     row.displaytext = rep.rep + ": " + Convert.ToDouble(rep.total.ToString()).ToString("##,##0");
                                 }
                                 else if (repnmbr == 2)
                                 {
                                     row.rep2 = rep.rep;
-                                    row.rep2total = rowtotal.ToString();
+                                    row.rep2total = temptotal.ToString();
 
                                     if (row.displaytext != "")
                                         row.displaytext = row.displaytext + Environment.NewLine;
@@ -304,7 +305,7 @@ namespace WebApplication1.Business_Rules
                                 else if (repnmbr == 3)
                                 {
                                     row.rep3 = rep.rep;
-                                    row.rep3total = rowtotal.ToString();
+                                    row.rep3total = temptotal.ToString();
                                     if (row.displaytext != "")
                                         row.displaytext = row.displaytext + Environment.NewLine;
                                     row.displaytext = row.displaytext + rep.rep + ": " + Convert.ToDouble(rep.total.ToString()).ToString("##,##0");
@@ -312,18 +313,28 @@ namespace WebApplication1.Business_Rules
                                 else
                                 {
 
-                                    double othtotal = Convert.ToDouble(rep.otherstotal);
-                                    othtotal = othtotal + Convert.ToDouble(rep.realtotal) + .5;
+                                    double othtotal = Convert.ToDouble(row.otherstotal);
+                                    othtotal = othtotal + Convert.ToDouble(rep.total);
 
                                     row.otherstotal = othtotal.ToString();
                                 }
                                 repnmbr = repnmbr + 1;
                             }
+
                             if (row.otherstotal == "0")
                                 row.otherstotal = "";
                             else
                             {
-                                double otherstotal = Convert.ToDouble(row.otherstotal) + .5;
+                                double otherstotal = Convert.ToDouble(row.otherstotal);
+                                double rep1total = Convert.ToDouble(row.rep1total);
+                                double rep2total = Convert.ToDouble(row.rep2total);
+                                double rep3total = Convert.ToDouble(row.rep3total);
+                                otherstotal = (int)otherstotal;
+
+                                int diff =(int)( rowtotal - otherstotal - rep1total - rep2total - rep3total);
+                                if(diff!=0)
+                                    otherstotal = otherstotal + diff;
+
                                 row.otherstotal = "  Others: " + otherstotal.ToString("##,##0");
                                 row.displaytext = row.displaytext + Environment.NewLine;
                                 row.displaytext = row.displaytext + row.otherstotal;
