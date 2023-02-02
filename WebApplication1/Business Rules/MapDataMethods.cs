@@ -130,7 +130,7 @@ namespace WebApplication1.Business_Rules
 
                         sqlstring = "SELECT bc.countryID, bc.stateID, bc.countyID, bc.county, bc.StateName as state, ISNULL(DATA.total,0)  AS total"
                             + " FROM BOGODashboardsCounties bc left JOIN"
-                            + " (SELECT  r.JQMCountyId, SUM(ROUND((CASE WHEN(Year = @fromyear AND Month >= @frommonth) AND(Year = @toyear AND Month <= @tomonth) THEN QtyTons ELSE 0 END), 2)) AS total"
+                            + " (SELECT  r.JQMCountyId, SUM(ROUND((CASE WHEN ((Year > @fromyear AND Year < @toyear) OR ( (Year = @fromyear AND Month >= @frommonth) or(Year = @toyear AND Month <= @tomonth))) THEN QtyTons ELSE 0 END), 2)) AS total"
                             + " FROM RawSalesHistoryByCounty r INNER JOIN webhub.dbo.employees we ON r.SLPRSNID = we.ImportKey"
                             + " INNER JOIN webhub.dbo.Segments s ON we.SegmentId = s.SegmentId"
                             + " INNER JOIN webhub.dbo.EmployeeGroups eg ON we.EmployeeGroupId = eg.EmployeeGroupId"
@@ -153,9 +153,10 @@ namespace WebApplication1.Business_Rules
 
                         results = db.Query<CountyResults>(sqlstring, new { @fromyear = fromyear, @frommonth = frommonth, @toyear = toyear, @tomonth = tomonth, @priorfromyear = priorfromyear, @priortoyear = priortoyear, @filter1 = criteria.Filter1, @filter2 = criteria.Filter2 }).ToList();
 
+
                         sqlstring = "SELECT Data.Rep, bc.countyID, ISNULL(DATA.total,0)  AS total"
                             + " FROM BOGODashboardsCounties bc left JOIN"
-                            + " (SELECT we.LastName AS Rep,  r.JQMCountyId, SUM(ROUND((CASE WHEN (Year = @fromyear AND Month >= @frommonth) AND  (Year = @toyear AND Month <= @tomonth) THEN QtyTons ELSE 0 END), 2)) AS total "
+                            + " (SELECT we.LastName AS Rep,  r.JQMCountyId, SUM(ROUND((CASE WHEN ((Year > @fromyear AND Year < @toyear) OR (Year = @fromyear AND Month >= @frommonth) or  (Year = @toyear AND Month <= @tomonth)) THEN QtyTons ELSE 0 END), 2)) AS total "
                             + " FROM RawSalesHistoryByCounty r INNER JOIN webhub.dbo.employees we ON r.SLPRSNID = we.ImportKey"
                             + " INNER JOIN webhub.dbo.Segments s ON we.SegmentId = s.SegmentId"
                             + " INNER JOIN webhub.dbo.EmployeeGroups eg ON we.EmployeeGroupId = eg.EmployeeGroupId"
