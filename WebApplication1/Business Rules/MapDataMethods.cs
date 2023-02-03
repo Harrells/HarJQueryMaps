@@ -185,7 +185,10 @@ namespace WebApplication1.Business_Rules
 
                         sqlstring = "SELECT bc.countryID, bc.stateID, bc.countyID, bc.county, bc.StateName as state, ISNULL(DATA.total,0)  AS total"
                             + " FROM BOGODashboardsCounties bc left JOIN"
-                            + " (SELECT ess.JQMCountyId, SUM((CASE WHEN ess.invoice_date >= @currbeg AND ess.invoice_date <= @currend then ess." + Models.Globals.SumFieldName + "  ELSE 0 end) * (CASE WHEN ess.essoptype = 4 THEN - 1 ELSE 1 END)) AS total"
+                            + " (SELECT ess.JQMCountyId, SUM((CASE WHEN ess.invoice_date >= @currbeg AND ess.invoice_date <= @currend then ess." + Models.Globals.SumFieldName + "  ELSE 0 end) ";  // * (CASE WHEN ess.essoptype = 4 THEN - 1 ELSE 1 END)) AS total"
+                        if (Models.Globals.SumFieldName.ToUpper().TrimEnd() == "BASEQTY")
+                            sqlstring = sqlstring + "* (CASE WHEN ess.essoptype = 4 THEN - 1 ELSE 1 END)";
+                        sqlstring = sqlstring + ") AS total "
                             + " FROM ExecSummarySales ess INNER JOIN GPSItemMaster gm ON ess.ITEMNMBR = gm.ITEMNMBR"
                             + " INNER JOIN Employees e ON ess.salesman = e.emp_id"
                             + " LEFT JOIN webhub.dbo.Segments s ON ess.Segment = s.Name"
@@ -222,7 +225,11 @@ namespace WebApplication1.Business_Rules
 
                         sqlstring = "SELECT rep, bc.countyID, ISNULL(DATA.total,0)  AS total"
                             + " FROM BOGODashboardsCounties bc left JOIN"
-                            + " (SELECT e.emp_last AS Rep, ess.JQMCountyId, SUM((CASE WHEN ess.invoice_date >= @currbeg AND ess.invoice_date <= @currend then ess." + Models.Globals.SumFieldName + "  ELSE 0 end) * (CASE WHEN ess.essoptype = 4 THEN - 1 ELSE 1 END)) AS total"
+                            + " (SELECT e.emp_last AS Rep, ess.JQMCountyId, SUM((CASE WHEN ess.invoice_date >= @currbeg AND ess.invoice_date <= @currend then ess." + Models.Globals.SumFieldName + "  ELSE 0 end) ";
+                        // if using baseqty, it is always positive so need to adjust for soptype 4.  Other #'s are negative already
+                        if (Models.Globals.SumFieldName.ToUpper().TrimEnd() == "BASEQTY")
+                            sqlstring = sqlstring + "* (CASE WHEN ess.essoptype = 4 THEN - 1 ELSE 1 END)";
+                        sqlstring = sqlstring +  ") AS total "
                             + " FROM ExecSummarySales ess INNER JOIN GPSItemMaster gm ON ess.ITEMNMBR = gm.ITEMNMBR"
                             + " INNER JOIN Employees e ON ess.salesman = e.emp_id"
                             + " LEFT JOIN webhub.dbo.Segments s ON ess.Segment = s.Name"
