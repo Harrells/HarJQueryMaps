@@ -258,6 +258,7 @@ namespace WebApplication1.Business_Rules
                         details = db.Query<CountyResults>(sqlstring, new { @whereclause = whereclause, @company = company, @priorbeg = priorbeg, @currbeg = currbeg, @priorend = priorend, @currend = currend, @filter1 = criteria.Filter1, @filter2 = criteria.Filter2 }).ToList();
 
                     }
+
                     // fill in some rep details for the display - top 3 reps then add everyone else into all others.
 
                     foreach (var row in results)
@@ -354,6 +355,215 @@ namespace WebApplication1.Business_Rules
                 throw ex;
             }
         }
+
+        public static List<CountyResults> SalesAnalysisMap(SATCriteria criteria)
+        {
+            try
+            {
+                using (SqlConnection db = new SqlConnection(Environment.GetEnvironmentVariable("SQLCONNSTR_CMDTAContext")))
+                using (SqlConnection azdb = new SqlConnection(Environment.GetEnvironmentVariable("SQLCONNSTR_HarMgmtDBContext")))
+                {
+
+                    List<CountyResults> results = new List<CountyResults>();
+                    List<CountyResults> details = new List<CountyResults>();
+
+                    Models.Globals.SumFieldName = "Sales $";
+
+                    // fill global ranges list
+                    string sqlstring = "SELECT br.rangeID, br.range_level, range, br.range_min, br.range_max, br.range_color"
+                        + " FROM BOGODashboardsRanges br"
+                        + " WHERE dashboardname=@dashboard";
+                    Models.Globals.MapRanges = azdb.Query<Ranges>(sqlstring, new { @dashboard = Models.Globals.Dashboard }).ToList();
+
+                    sqlstring = "SELECT bc.countryID, bc.stateID, bc.countyID, bc.county, bc.StateName as state, ISNULL(DATA.total,0)  AS total"
+                        + " FROM BOGODashboardsCounties bc left JOIN"
+                        + " (SELECT ess.JQMCountyId, SUM((CASE WHEN ess.invoice_date >= @currbeg AND ess.invoice_date <= @currend then ess.ext_retail  ELSE 0 end) ) AS total"
+                        + " FROM ExecSummarySales ess"
+                        + " where Company = 'south' and invoice_date>=@currbeg and invoice_date<=@currend ";
+
+                    if (criteria.ExcludeZZs == true)
+                        sqlstring = sqlstring + "  AND execsummarysales.ITEMNMBR not like 'ZZ%' ";
+
+                    if (!string.IsNullOrEmpty(criteria.LOCNCODE))
+                        sqlstring = sqlstring + " AND warehouse=@locncode ";
+
+                    if (!string.IsNullOrEmpty(criteria.Segment))
+                        sqlstring = sqlstring + " AND segment=@segment ";
+
+                    if (!string.IsNullOrEmpty(criteria.ReportGroup))
+                        sqlstring = sqlstring + " AND RepGroup=@repgroup ";
+
+                    if (!string.IsNullOrEmpty(criteria.RepID))
+                        sqlstring = sqlstring + " AND salesman=@repid ";
+
+                    if (!string.IsNullOrEmpty(criteria.Partnership))
+                        sqlstring = sqlstring + " AND Partnership=@partnership ";
+
+                    if (!string.IsNullOrEmpty(criteria.Category))
+                        sqlstring = sqlstring + " AND CustCategory=@category ";
+
+                    if (!string.IsNullOrEmpty(criteria.Item))
+                        sqlstring = sqlstring + " AND execsummarysales.itemnmbr=@item ";
+
+                    if (!string.IsNullOrEmpty(criteria.Class))
+                        sqlstring = sqlstring + " AND ITMCLSCD=@class ";
+
+                    if (!string.IsNullOrEmpty(criteria.Vendor))
+                        sqlstring = sqlstring + " AND vendor=@vendor ";
+
+                    if (!string.IsNullOrEmpty(criteria.Type))
+                        sqlstring = sqlstring + " AND ProdType=@type ";
+
+                    sqlstring = sqlstring + "  group by ess.JQMCountyId) AS Data ON Data.JQMCountyId=bc.countyID"
+                        + " ORDER BY bc.countyID, total desc";
+
+                    results = db.Query<CountyResults>(sqlstring, new {  @currbeg=criteria.BeginDate, @currend=criteria.EndDate, @segment = criteria.Segment, @repgroup = criteria.ReportGroup, @repid = criteria.RepID, @partnership = criteria.Partnership, @category = criteria.Category, @item = criteria.Item, @class = criteria.Class, @vendor = criteria.Vendor, @type = criteria.Type, @locncode = criteria.LOCNCODE }).ToList();
+
+                    sqlstring = "SELECT rep, bc.countryID, bc.stateID, bc.countyID, bc.county, bc.StateName as state, ISNULL(DATA.total,0)  AS total"
+                        + " FROM BOGODashboardsCounties bc INNER JOIN"
+                        + " (SELECT e.emp_last AS Rep, ess.JQMCountyId, SUM((CASE WHEN ess.invoice_date >= @currbeg AND ess.invoice_date <= @currend then ess.ext_retail  ELSE 0 end) ) AS total"
+                        + " FROM ExecSummarySales ess"
+                        + " INNER JOIN Employees e ON ess.salesman = e.emp_id"
+                        + " LEFT JOIN webhub.dbo.Segments s ON ess.Segment = s.Name"
+                        + " LEFT JOIN webhub.dbo.EmployeeGroups eg ON ess.RepGroup = eg.Name"
+                        + " where Company = 'south' and invoice_date>=@currbeg and invoice_date<=@currend ";
+
+                    if (criteria.ExcludeZZs == true)
+                        sqlstring = sqlstring + "  AND execsummarysales.ITEMNMBR not like 'ZZ%' ";
+
+                    if (!string.IsNullOrEmpty(criteria.LOCNCODE))
+                        sqlstring = sqlstring + " AND warehouse=@locncode ";
+
+                    if (!string.IsNullOrEmpty(criteria.Segment))
+                        sqlstring = sqlstring + " AND segment=@segment ";
+
+                    if (!string.IsNullOrEmpty(criteria.ReportGroup))
+                        sqlstring = sqlstring + " AND RepGroup=@repgroup ";
+
+                    if (!string.IsNullOrEmpty(criteria.RepID))
+                        sqlstring = sqlstring + " AND salesman=@repid ";
+
+                    if (!string.IsNullOrEmpty(criteria.Partnership))
+                        sqlstring = sqlstring + " AND Partnership=@partnership ";
+
+                    if (!string.IsNullOrEmpty(criteria.Category))
+                        sqlstring = sqlstring + " AND CustCategory=@category ";
+
+                    if (!string.IsNullOrEmpty(criteria.Item))
+                        sqlstring = sqlstring + " AND execsummarysales.itemnmbr=@item ";
+
+                    if (!string.IsNullOrEmpty(criteria.Class))
+                        sqlstring = sqlstring + " AND ITMCLSCD=@class ";
+
+                    if (!string.IsNullOrEmpty(criteria.Vendor))
+                        sqlstring = sqlstring + " AND vendor=@vendor ";
+
+                    if (!string.IsNullOrEmpty(criteria.Type))
+                        sqlstring = sqlstring + " AND ProdType=@type ";
+
+                    sqlstring = sqlstring + "  group by e.emp_last, ess.JQMCountyId) AS Data ON Data.JQMCountyId=bc.countyID"
+                        + " ORDER BY bc.countyID, total desc";
+
+                    details = db.Query<CountyResults>(sqlstring, new { @currbeg = criteria.BeginDate, @currend = criteria.EndDate, @segment = criteria.Segment, @repgroup = criteria.ReportGroup, @repid = criteria.RepID, @partnership = criteria.Partnership, @category = criteria.Category, @item = criteria.Item, @class = criteria.Class, @vendor = criteria.Vendor, @type = criteria.Type, @locncode = criteria.LOCNCODE }).ToList();
+
+
+                    // fill in some rep details for the display - top 3 reps then add everyone else into all others.
+
+                    foreach (var row in results)
+                    {
+                        int rowtotal = 0;
+
+                        row.realtotal = row.total;
+                        double temptotal = Convert.ToDouble(row.total);
+                        temptotal = temptotal + .5;
+                        temptotal = Math.Truncate(temptotal);
+                        if (temptotal == 0)
+                            row.total = "0";
+                        else
+                            row.total = temptotal.ToString();
+                        rowtotal = 0;
+                        row.otherstotal = "0";
+                        row.displaytext = "";
+                        int repnmbr = 1;
+                        var reps = details.Where(o => o.countyID == row.countyID && o.total != "0").ToList();
+                        if (reps.Count != 0)
+                        {
+
+                            foreach (var rep in reps)
+                            {
+                                temptotal = Convert.ToDouble(rep.total);
+                                temptotal = temptotal + .5;
+                                rowtotal = rowtotal + (int)temptotal;
+                                temptotal = (int)temptotal;
+                                if (repnmbr == 1)
+                                {
+                                    row.rep1 = rep.rep;
+                                    row.rep1total = temptotal.ToString();
+                                    row.displaytext = rep.rep + ": " + Convert.ToDouble(rep.total.ToString()).ToString("##,##0");
+                                }
+                                else if (repnmbr == 2)
+                                {
+                                    row.rep2 = rep.rep;
+                                    row.rep2total = temptotal.ToString();
+
+                                    if (row.displaytext != "")
+                                        row.displaytext = row.displaytext + Environment.NewLine;
+                                    row.displaytext = row.displaytext + rep.rep + ": " + Convert.ToDouble(rep.total.ToString()).ToString("##,##0");
+                                }
+                                else if (repnmbr == 3)
+                                {
+                                    row.rep3 = rep.rep;
+                                    row.rep3total = temptotal.ToString();
+                                    if (row.displaytext != "")
+                                        row.displaytext = row.displaytext + Environment.NewLine;
+                                    row.displaytext = row.displaytext + rep.rep + ": " + Convert.ToDouble(rep.total.ToString()).ToString("##,##0");
+                                }
+                                else
+                                {
+
+                                    double othtotal = Convert.ToDouble(row.otherstotal);
+                                    othtotal = othtotal + Convert.ToDouble(rep.total);
+
+                                    row.otherstotal = othtotal.ToString();
+                                }
+                                repnmbr = repnmbr + 1;
+                            }
+
+                            if (row.otherstotal == "0")
+                                row.otherstotal = "";
+                            else
+                            {
+                                double otherstotal = Convert.ToDouble(row.otherstotal);
+                                double rep1total = Convert.ToDouble(row.rep1total);
+                                double rep2total = Convert.ToDouble(row.rep2total);
+                                double rep3total = Convert.ToDouble(row.rep3total);
+                                otherstotal = (int)otherstotal;
+
+                                int diff = (int)(rowtotal - otherstotal - rep1total - rep2total - rep3total);
+                                if (diff != 0)
+                                    otherstotal = otherstotal + diff;
+
+                                row.otherstotal = "  Others: " + otherstotal.ToString("##,##0");
+                                row.displaytext = row.displaytext + Environment.NewLine;
+                                row.displaytext = row.displaytext + row.otherstotal;
+                            }
+                        }
+
+                        if (rowtotal != Int32.Parse(row.total))
+                            row.total = rowtotal.ToString();
+                    }
+
+                    return results;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+
+
 
     }
 }

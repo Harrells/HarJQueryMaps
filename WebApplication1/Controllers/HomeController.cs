@@ -27,54 +27,77 @@ namespace WebApplication1.Controllers
                 //https://harmapstest.azurewebsites.net/?Dashboard=Blended Fert&FromMonth=2022/01&ToMonth=2022/12&Filter1=&Filter2=&Groups=~Turf^Florida~Turf^Southeast~Turf^West~Turf^Coastal Plains~Turf^Midatlantic~Turf^Midwest~Turf^Northeast~Turf^Couth Central~Nursery^North Hort~Nursery^West Hort~Nursery^South Hort~Specialty Ag^Spec. Ag.~
                 //getting qs paramerters here - putting them into the model so they are accessible to the rest of the app
                 Models.Globals.Dashboard = Request.QueryString["Dashboard"];
-                Models.Globals.FromMonth = Request.QueryString["FromMonth"];
-                Models.Globals.ToMonth = Request.QueryString["ToMonth"];
-                Models.Globals.Filter1 = Request.QueryString["Filter1"];
-                Models.Globals.Filter2 = Request.QueryString["Filter2"];
-                Models.Globals.Results = new List<CountyResults>();
 
-                string groupsList = "";
-                if (Request.QueryString["Groups"] != null)
+                if (Models.Globals.Dashboard == "SAT")
                 {
-                    string[] groupNVPairs = Request.QueryString["Groups"].Split('~');
-                    foreach (var group in groupNVPairs)
+                    SATCriteria mapcriteria = new SATCriteria();
+                    mapcriteria.Segment = Request.QueryString["Segment"];
+                    mapcriteria.ReportGroup = Request.QueryString["ReportGroup"];
+                    mapcriteria.RepID = Request.QueryString["RepID"];
+                    mapcriteria.Partnership = Request.QueryString["Partnership"];
+                    mapcriteria.Category = Request.QueryString["Category"];
+                    mapcriteria.Item = Request.QueryString["Item"];
+                    mapcriteria.Class = Request.QueryString["Class"];
+                    mapcriteria.Vendor = Request.QueryString["Vendor"];
+                    mapcriteria.Type = Request.QueryString["Type"];
+                    mapcriteria.LOCNCODE = Request.QueryString["LOCNCODE"];
+                    mapcriteria.BeginDate = Request.QueryString["BeginDate"];
+                    mapcriteria.EndDate = Request.QueryString["EndDate"];
+
+                    Models.Globals.Results = WebApplication1.Business_Rules.MapDataMethods.SalesAnalysisMap(mapcriteria);
+
+                }
+                else
+                {
+
+                    Models.Globals.FromMonth = Request.QueryString["FromMonth"];
+                    Models.Globals.ToMonth = Request.QueryString["ToMonth"];
+                    Models.Globals.Filter1 = Request.QueryString["Filter1"];
+                    Models.Globals.Filter2 = Request.QueryString["Filter2"];
+                    Models.Globals.Results = new List<CountyResults>();
+
+                    string groupsList = "";
+                    if (Request.QueryString["Groups"] != null)
                     {
-                        if (group != "")
+                        string[] groupNVPairs = Request.QueryString["Groups"].Split('~');
+                        foreach (var group in groupNVPairs)
                         {
-                            var nvGroup = group.Split('^');
-                            string repgroup = nvGroup[1];
-                            string actrepgroup = nvGroup[1];
-
-                            // need to get actual group name from db
-                            string sqlstring = "SELECT eg.Name"
-                                + " FROM webhub.dbo.EmployeeGroups eg"
-                                + " WHERE eg.Description = @group";
-                            var thisgroup = db.Query(sqlstring, new { @group = repgroup }).FirstOrDefault();
-                            if (thisgroup != null)
+                            if (group != "")
                             {
-                                actrepgroup = thisgroup.Name;
-                                if (groupsList != "")
-                                    groupsList = groupsList + ",";
-                                groupsList = groupsList + "'" + actrepgroup + "'";
+                                var nvGroup = group.Split('^');
+                                string repgroup = nvGroup[1];
+                                string actrepgroup = nvGroup[1];
+
+                                // need to get actual group name from db
+                                string sqlstring = "SELECT eg.Name"
+                                    + " FROM webhub.dbo.EmployeeGroups eg"
+                                    + " WHERE eg.Description = @group";
+                                var thisgroup = db.Query(sqlstring, new { @group = repgroup }).FirstOrDefault();
+                                if (thisgroup != null)
+                                {
+                                    actrepgroup = thisgroup.Name;
+                                    if (groupsList != "")
+                                        groupsList = groupsList + ",";
+                                    groupsList = groupsList + "'" + actrepgroup + "'";
+                                }
+
                             }
-
                         }
+                        Models.Globals.Groups = groupsList;
+
+
+                        DashboardCriteria criteria = new DashboardCriteria();
+                        criteria.Dashboard = Models.Globals.Dashboard;
+                        criteria.FromMonth = Models.Globals.FromMonth;
+                        criteria.ToMonth = Models.Globals.ToMonth;
+                        criteria.Filter1 = Models.Globals.Filter1;
+                        criteria.Filter2 = Models.Globals.Filter2;
+                        criteria.Groups = Models.Globals.Groups;
+
+                        // build a global list of results by county
+
+                        Models.Globals.Results = WebApplication1.Business_Rules.MapDataMethods.GetCountyResults(criteria);
                     }
-                    Models.Globals.Groups = groupsList;
-
-
-                    DashboardCriteria criteria = new DashboardCriteria();
-                    criteria.Dashboard = Models.Globals.Dashboard;
-                    criteria.FromMonth = Models.Globals.FromMonth;
-                    criteria.ToMonth = Models.Globals.ToMonth;
-                    criteria.Filter1 = Models.Globals.Filter1;
-                    criteria.Filter2 = Models.Globals.Filter2;
-                    criteria.Groups = Models.Globals.Groups;
-
-                    // build a global list of results by county
-
-                    Models.Globals.Results= WebApplication1.Business_Rules.MapDataMethods.GetCountyResults(criteria);
-
 
 
                 }
