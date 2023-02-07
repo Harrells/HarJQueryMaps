@@ -46,8 +46,6 @@ namespace WebApplication1.Business_Rules
                         + " WHERE dashboardname=@dashboard";
                     Models.Globals.MapRanges = azdb.Query<Ranges>(sqlstring, new { @dashboard = Models.Globals.Dashboard }).ToList();
 
-
-
                     string filterfieldname1 = "";
                     string filterfieldname2 = "";
                     string dashboardname = dashboardinfo.DashboardName.TrimEnd().ToUpper();
@@ -71,10 +69,17 @@ namespace WebApplication1.Business_Rules
                             filterfieldname2 = dashboardinfo.Filter2FieldName;
                     }
 
+                    if (!string.IsNullOrEmpty(Models.Globals.SumFieldName))
+                        fieldname = Models.Globals.SumFieldName;
 
+                    string convertUM = "";
+                    if (!string.IsNullOrEmpty(dashboardinfo.ConvertUM))
+                    {
+                        convertUM = dashboardinfo.ConvertUM;
+                        // if they are converting to a um, the sumfieldname has to be ess.actual_qty*iv.EQUOMQTY
+                        fieldname = "ess.actual_qty * iv.EQUOMQTY";
+                    }
 
-                    if (!string.IsNullOrEmpty(dashboardinfo.SumFieldName))
-                        fieldname = dashboardinfo.SumFieldName;
                     if (!string.IsNullOrEmpty(dashboardinfo.DashboardUM))
                     {
                         Models.Globals.DashboardUM = dashboardinfo.DashboardUM;
@@ -185,16 +190,20 @@ namespace WebApplication1.Business_Rules
 
                         sqlstring = "SELECT bc.countryID, bc.stateID, bc.countyID, bc.county, bc.StateName as state, ISNULL(DATA.total,0)  AS total"
                             + " FROM BOGODashboardsCounties bc left JOIN"
-                            + " (SELECT ess.JQMCountyId, SUM((CASE WHEN ess.invoice_date >= @currbeg AND ess.invoice_date <= @currend then ess." + Models.Globals.SumFieldName + "  ELSE 0 end) ";  // * (CASE WHEN ess.essoptype = 4 THEN - 1 ELSE 1 END)) AS total"
-                        if (Models.Globals.SumFieldName.ToUpper().TrimEnd() == "BASEQTY")
+                            + " (SELECT ess.JQMCountyId, SUM((CASE WHEN ess.invoice_date >= @currbeg AND ess.invoice_date <= @currend then " + fieldname + "  ELSE 0 end) ";  // * (CASE WHEN ess.essoptype = 4 THEN - 1 ELSE 1 END)) AS total"
+                        if (fieldname.ToUpper().TrimEnd() == "BASEQTY")
                             sqlstring = sqlstring + "* (CASE WHEN ess.essoptype = 4 THEN - 1 ELSE 1 END)";
                         sqlstring = sqlstring + ") AS total "
                             + " FROM ExecSummarySales ess INNER JOIN GPSItemMaster gm ON ess.ITEMNMBR = gm.ITEMNMBR"
                             + " INNER JOIN Employees e ON ess.salesman = e.emp_id"
                             + " LEFT JOIN webhub.dbo.Segments s ON ess.Segment = s.Name"
                             + " LEFT JOIN webhub.dbo.EmployeeGroups eg ON ess.RepGroup = eg.Name"
-                            + " INNER JOIN BOGODashboardsCounties bc ON ess.JQMCountyId = bc.countyID"
-                            + " WHERE eg.Name IN (" + criteria.Groups + ") and ess.invoice_date >=";
+                            + " INNER JOIN BOGODashboardsCounties bc ON ess.JQMCountyId = bc.countyID";
+
+                        if (convertUM != "")
+                            sqlstring = sqlstring + " INNER JOIN har.dbo.iv40202 iv ON gm.UOMSCHDL = iv.UOMSCHDL AND ess.BaseUofM=iv.EQUIVUOM AND iv.UOFM " + convertUM;
+
+                        sqlstring = sqlstring+ " WHERE eg.Name IN (" + criteria.Groups + ") and ess.invoice_date >=";
 
                         if (currend < currbeg.AddYears(1))
                         {
@@ -224,18 +233,22 @@ namespace WebApplication1.Business_Rules
                         results = db.Query<CountyResults>(sqlstring, new { @whereclause = whereclause, @company = company, @priorbeg = priorbeg, @currbeg = currbeg, @priorend = priorend, @currend = currend, @filter1 = criteria.Filter1, @filter2 = criteria.Filter2 }).ToList();
 
                         sqlstring = "SELECT rep, bc.countyID, ISNULL(DATA.total,0)  AS total"
-                            + " FROM BOGODashboardsCounties bc left JOIN"
-                            + " (SELECT e.emp_last AS Rep, ess.JQMCountyId, SUM((CASE WHEN ess.invoice_date >= @currbeg AND ess.invoice_date <= @currend then ess." + Models.Globals.SumFieldName + "  ELSE 0 end) ";
+                            + " FROM BOGODashboardsCounties bc inner JOIN"
+                            + " (SELECT e.emp_last AS Rep, ess.JQMCountyId, SUM((CASE WHEN ess.invoice_date >= @currbeg AND ess.invoice_date <= @currend then " + fieldname + "  ELSE 0 end) ";
                         // if using baseqty, it is always positive so need to adjust for soptype 4.  Other #'s are negative already
-                        if (Models.Globals.SumFieldName.ToUpper().TrimEnd() == "BASEQTY")
+                        if (fieldname.ToUpper().TrimEnd() == "BASEQTY")
                             sqlstring = sqlstring + "* (CASE WHEN ess.essoptype = 4 THEN - 1 ELSE 1 END)";
-                        sqlstring = sqlstring +  ") AS total "
+                        sqlstring = sqlstring + ") AS total "
                             + " FROM ExecSummarySales ess INNER JOIN GPSItemMaster gm ON ess.ITEMNMBR = gm.ITEMNMBR"
                             + " INNER JOIN Employees e ON ess.salesman = e.emp_id"
                             + " LEFT JOIN webhub.dbo.Segments s ON ess.Segment = s.Name"
                             + " LEFT JOIN webhub.dbo.EmployeeGroups eg ON ess.RepGroup = eg.Name"
-                            + " INNER JOIN BOGODashboardsCounties bc ON ess.JQMCountyId = bc.countyID"
-                            + " WHERE eg.Name IN (" + criteria.Groups + ") and ess.invoice_date >=";
+                            + " INNER JOIN BOGODashboardsCounties bc ON ess.JQMCountyId = bc.countyID";
+
+                        if (convertUM != "")
+                            sqlstring = sqlstring + " INNER JOIN har.dbo.iv40202 iv ON gm.UOMSCHDL = iv.UOMSCHDL AND ess.BaseUofM=iv.EQUIVUOM AND iv.UOFM " + convertUM;
+
+                        sqlstring = sqlstring + " WHERE eg.Name IN (" + criteria.Groups + ") and ess.invoice_date >=";
 
                         if (currend < currbeg.AddYears(1))
                         {
