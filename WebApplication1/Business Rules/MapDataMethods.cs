@@ -402,7 +402,7 @@ namespace WebApplication1.Business_Rules
                         + " where Company = 'south' and invoice_date>=@currbeg and invoice_date<=@currend ";
 
                     if (criteria.ExcludeZZs == true)
-                        sqlstring = sqlstring + "  AND execsummarysales.ITEMNMBR not like 'ZZ%' ";
+                        sqlstring = sqlstring + "  AND ess.ITEMNMBR not like 'ZZ%' ";
 
                     if (!string.IsNullOrEmpty(criteria.LOCNCODE))
                         sqlstring = sqlstring + " AND warehouse=@locncode ";
@@ -423,7 +423,7 @@ namespace WebApplication1.Business_Rules
                         sqlstring = sqlstring + " AND CustCategory=@category ";
 
                     if (!string.IsNullOrEmpty(criteria.Item))
-                        sqlstring = sqlstring + " AND execsummarysales.itemnmbr=@item ";
+                        sqlstring = sqlstring + " AND ess.itemnmbr=@item ";
 
                     if (!string.IsNullOrEmpty(criteria.Class))
                         sqlstring = sqlstring + " AND ITMCLSCD=@class ";
@@ -449,7 +449,7 @@ namespace WebApplication1.Business_Rules
                         + " where Company = 'south' and invoice_date>=@currbeg and invoice_date<=@currend ";
 
                     if (criteria.ExcludeZZs == true)
-                        sqlstring = sqlstring + "  AND execsummarysales.ITEMNMBR not like 'ZZ%' ";
+                        sqlstring = sqlstring + "  AND ess.ITEMNMBR not like 'ZZ%' ";
 
                     if (!string.IsNullOrEmpty(criteria.LOCNCODE))
                         sqlstring = sqlstring + " AND warehouse=@locncode ";
@@ -470,7 +470,7 @@ namespace WebApplication1.Business_Rules
                         sqlstring = sqlstring + " AND CustCategory=@category ";
 
                     if (!string.IsNullOrEmpty(criteria.Item))
-                        sqlstring = sqlstring + " AND execsummarysales.itemnmbr=@item ";
+                        sqlstring = sqlstring + " AND ess.itemnmbr=@item ";
 
                     if (!string.IsNullOrEmpty(criteria.Class))
                         sqlstring = sqlstring + " AND ITMCLSCD=@class ";
