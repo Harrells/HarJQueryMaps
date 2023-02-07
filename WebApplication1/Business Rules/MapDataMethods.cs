@@ -76,8 +76,8 @@ namespace WebApplication1.Business_Rules
                     if (!string.IsNullOrEmpty(dashboardinfo.ConvertUM))
                     {
                         convertUM = dashboardinfo.ConvertUM;
-                        // if they are converting to a um, the sumfieldname has to be ess.actual_qty*iv.EQUOMQTY
-                        fieldname = "ess.actual_qty * iv.EQUOMQTY";
+                        // if they are converting to a um, the sumfieldname has to be ess.baseqty*iv.EQUOMQTY
+                        fieldname = "ess.baseqty * iv.EQUOMQTY";
                     }
 
                     if (!string.IsNullOrEmpty(dashboardinfo.DashboardUM))
