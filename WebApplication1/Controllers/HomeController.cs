@@ -44,6 +44,8 @@ namespace WebApplication1.Controllers
                     mapcriteria.BeginDate = Request.QueryString["BeginDate"];
                     mapcriteria.EndDate = Request.QueryString["EndDate"];
 
+                    Models.Globals.DashboardUM = "$$$";
+
                     Models.Globals.Results = WebApplication1.Business_Rules.MapDataMethods.SalesAnalysisMap(mapcriteria);
 
                 }
