@@ -28,6 +28,7 @@ namespace WebApplication1.Controllers
                 //getting qs paramerters here - putting them into the model so they are accessible to the rest of the app
                 Models.Globals.Dashboard = Request.QueryString["Dashboard"];
 
+
                 if (Models.Globals.Dashboard == "SAT")
                 {
                     SATCriteria mapcriteria = new SATCriteria();
@@ -43,6 +44,14 @@ namespace WebApplication1.Controllers
                     mapcriteria.LOCNCODE = Request.QueryString["LOCNCODE"];
                     mapcriteria.BeginDate = Request.QueryString["BeginDate"];
                     mapcriteria.EndDate = Request.QueryString["EndDate"];
+
+                    try
+                    {
+                        WebApplication1.Business_Rules.Utilities.LogActivity("", "MAP", Models.Globals.Dashboard + " Begin Date: " + mapcriteria.BeginDate + " End Date: " + mapcriteria.EndDate);
+                    }
+                    catch
+                    {
+                    }
 
                     Models.Globals.DashboardUM = "$$$";
 
@@ -95,6 +104,14 @@ namespace WebApplication1.Controllers
                         criteria.Filter1 = Models.Globals.Filter1;
                         criteria.Filter2 = Models.Globals.Filter2;
                         criteria.Groups = Models.Globals.Groups;
+
+                        try
+                        {
+                            WebApplication1.Business_Rules.Utilities.LogActivity("", "MAP", Models.Globals.Dashboard + " From Month: " + criteria.FromMonth + " To Month: " + criteria.ToMonth);
+                        }
+                        catch
+                        {
+                        }
 
                         // build a global list of results by county
 
