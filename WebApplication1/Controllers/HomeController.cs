@@ -28,6 +28,7 @@ namespace WebApplication1.Controllers
                 //getting qs paramerters here - putting them into the model so they are accessible to the rest of the app
                 Models.Globals.Dashboard = Request.QueryString["Dashboard"];
 
+                string username = Request.QueryString["User"];
 
                 if (Models.Globals.Dashboard == "SAT")
                 {
@@ -47,7 +48,7 @@ namespace WebApplication1.Controllers
 
                     try
                     {
-                        WebApplication1.Business_Rules.Utilities.LogActivity("", "MAP", Models.Globals.Dashboard + " Begin Date: " + mapcriteria.BeginDate + " End Date: " + mapcriteria.EndDate);
+                        WebApplication1.Business_Rules.Utilities.LogActivity(username, "MAP", Models.Globals.Dashboard + " Begin Date: " + mapcriteria.BeginDate + " End Date: " + mapcriteria.EndDate);
                     }
                     catch
                     {
@@ -107,7 +108,7 @@ namespace WebApplication1.Controllers
 
                         try
                         {
-                            WebApplication1.Business_Rules.Utilities.LogActivity("", "MAP", Models.Globals.Dashboard + " From Month: " + criteria.FromMonth + " To Month: " + criteria.ToMonth);
+                            WebApplication1.Business_Rules.Utilities.LogActivity(username, "MAP", Models.Globals.Dashboard + " From Month: " + criteria.FromMonth + " To Month: " + criteria.ToMonth);
                         }
                         catch
                         {
