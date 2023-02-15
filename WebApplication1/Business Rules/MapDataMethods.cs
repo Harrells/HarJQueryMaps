@@ -378,7 +378,7 @@ namespace WebApplication1.Business_Rules
                         row.otherstotal = "0";
                         row.displaytext = "";
                         int repnmbr = 1;
-                        var reps = details.Where(o => o.countyID == row.countyID && o.total != "0").ToList();
+                        var reps = details.Where(o => o.countyID == row.countyID && o.total != "0").OrderByDescending(x=> Convert.ToDouble(x.total)).ToList();
                         if (reps.Count != 0)
                         {
                             if (reps.Count > maxnmbr)
