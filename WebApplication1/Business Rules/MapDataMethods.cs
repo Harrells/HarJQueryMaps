@@ -33,10 +33,14 @@ namespace WebApplication1.Business_Rules
                     if (criteria.Filter2 == null)
                         criteria.Filter2 = "";
 
+                    bool includesoil = false;
+
                     string sqlstring = "SELECT * FROM BOGODashboards b WHERE b.DashboardName=@dashboard";
                     var dashboardinfo = azdb.Query(sqlstring, new { @dashboard = criteria.Dashboard }).FirstOrDefault();
                     if (dashboardinfo == null)
                         return new List<CountyResults>();
+
+                    includesoil = dashboardinfo.IncludeSoilFertTons;
 
                     Models.Globals.SumFieldName = dashboardinfo.SumFieldName;
 
@@ -277,6 +281,78 @@ namespace WebApplication1.Business_Rules
                             + " ORDER BY bc.countyID, total desc";
                         details = db.Query<CountyResults>(sqlstring, new { @whereclause = whereclause, @company = company, @priorbeg = priorbeg, @currbeg = currbeg, @priorend = priorend, @currend = currend, @filter1 = criteria.Filter1, @filter2 = criteria.Filter2 }).ToList();
 
+                        // 2/15/23 - We need to add in the sales of fertilizer that was in soil sales.
+
+                        if (includesoil)
+                        {
+                            // this is a ridiculous query but needed to get data in a format to use the where clause from teh dashboard setup
+                            sqlstring = "select e.emp_last AS rep, ESS.JQMCountyId AS countyID,SUM(ess.BaseQty) AS total"
+                                + " FROM(SELECT sfts.*, sfts.QtyTons AS BaseQty, gm1.ITMCLSCD"
+                                + " FROM SoilFertTonsSold sfts INNER JOIN GPSItemMaster gm1 ON sfts.ITEMNMBR = gm1.ITEMNMBR) AS ESS"
+                                + " INNER JOIN GPSItemMaster gm ON ess.ITEMNMBR = gm.ITEMNMBR"
+                                + " INNER JOIN Employees e ON ess.SLSPRSNID = e.emp_id LEFT JOIN webhub.dbo.Segments s ON e.CommGroup = s.Name"
+                                + " LEFT JOIN webhub.dbo.EmployeeGroups eg ON e.CommRptGroup = eg.Name"
+                                + " WHERE ess.DocDate >=";
+                            if (currend < currbeg.AddYears(1))
+                            {
+                                sqlstring = sqlstring + " @priorbeg ";
+                            }
+                            else
+                            {
+                                sqlstring = sqlstring + " @currbeg ";
+                            }
+
+                            sqlstring = sqlstring + " AND ess.DocDate <= @currend ";
+                            if (!string.IsNullOrEmpty(whereclause))
+                                sqlstring = sqlstring + " AND  " + whereclause;
+
+                            if (criteria.Filter1 != string.Empty)
+                                sqlstring = sqlstring + " AND (" + filterfieldname1 + " = @filter1)";
+                            if (criteria.Filter2 != string.Empty)
+                                sqlstring = sqlstring + " AND (" + filterfieldname2 + " = @filter2)";
+
+                            sqlstring = sqlstring + " and ess.itemnmbr not like 'zz%'"
+                                + " GROUP BY e.emp_last, ESS.JQMCountyId ";
+
+                            var soilresults = db.Query<CountyResults>(sqlstring, new { @whereclause = whereclause, @company = company, @priorbeg = priorbeg, @currbeg = currbeg, @priorend = priorend, @currend = currend, @filter1 = criteria.Filter1, @filter2 = criteria.Filter2 }).ToList();
+
+                            bool foundit = false;
+
+                            foreach (var rep in soilresults)
+                            {
+                                if (rep.countyID == "12099")
+                                {
+                                    foundit = true;
+                                }
+
+                                var resultsrep = results.Where(o =>  o.countyID==rep.countyID).FirstOrDefault();
+                                if (resultsrep != null)
+                                {
+                                    double temptotal = Convert.ToDouble(resultsrep.total);
+                                    double soiltotal = Convert.ToDouble(rep.total);
+
+                                    resultsrep.total = (temptotal + soiltotal).ToString();
+                                }
+                                var detailrep = details.Where(o => o.rep == rep.rep && o.countyID == rep.countyID).FirstOrDefault();
+                                if (detailrep != null)
+                                {
+                                    double temptotal = Convert.ToDouble(detailrep.total);
+                                    double soiltotal = Convert.ToDouble(rep.total);
+
+                                    detailrep.total = (temptotal + soiltotal).ToString();
+                                }
+
+                            }
+
+                            details = details.OrderBy(o => o.countyID).ThenByDescending(o => o.total).ToList();
+
+                        }
+
+
+
+
+
+
                     }
 
                     // fill in some rep details for the display - top 3 reps then add everyone else into all others.
@@ -284,6 +360,11 @@ namespace WebApplication1.Business_Rules
                     foreach (var row in results)
                     {
                         int rowtotal = 0;
+                        if (row.countyID == "12099")
+                        {
+                            rowtotal = 0;
+                        }
+
 
                         row.realtotal = row.total;
                         double temptotal = Convert.ToDouble(row.total);
